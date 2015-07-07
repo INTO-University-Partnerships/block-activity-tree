@@ -12,3 +12,24 @@ The following packages must be added to `composer.json`:
         "twig/twig": "1.18.*",
         "lstrojny/functional-php": "1.0.0"
     }
+
+Relative to the directory in which Moodle is installed:
+
+    ./composer.phar self-update
+    ./composer.phar update
+
+## Installation
+
+Relative to the directory in which Moodle is installed:
+
+    cd blocks
+    git clone https://github.com/INTO-University-Partnerships/block-activity-tree activity_tree
+    cd ..
+    php admin/cli/upgrade.php
+
+## Tests
+
+Relative to the directory in which Moodle is installed:
+
+    php admin/tool/phpunit/cli/util.php --buildcomponentconfigs
+    vendor/bin/phpunit -c blocks/activity_tree
