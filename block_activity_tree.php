@@ -2,20 +2,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/lib.php';
 
 class block_activity_tree extends block_base {
-
-    /**
-     * @var Twig_Loader_Filesystem
-     */
-    protected $twig_loader_filesystem;
-
-    /**
-     * @var Twig_Environment
-     */
-    protected $twig_environment;
 
     /**
      * @throws coding_exception
@@ -28,35 +17,25 @@ class block_activity_tree extends block_base {
      * @return stdClass
      */
     public function get_content() {
-        global $CFG;
-
         // lazy initialization
         if (!empty($this->content)) {
             return $this->content;
         }
-        if (empty($this->twig_loader_filesystem)) {
-            $this->twig_loader_filesystem = new Twig_Loader_Filesystem(realpath(__DIR__));
-        }
-        if (empty($this->twig_environment)) {
-            $this->twig_environment = new Twig_Environment($this->twig_loader_filesystem, [
-                'cache' => false,
-            ]);
-        }
 
-        // get the course tree (i.e. sections and their child course modules)
-        $course_tree = get_course_tree(
+        // get the activity tree as JSON
+        $activity_tree = json_encode(block_activity_tree\get_activity_tree(
             get_fast_modinfo($this->page->course),
             optional_param('section', -1, PARAM_INT),
             $this->page->context
-        );
+        ));
 
-        // render the course tree
+        // render the activity tree
         $this->content = new stdClass();
-        $this->content->text = $this->twig_environment->render('template.twig', [
-            'wwwroot' => $CFG->wwwroot,
-            'courseid' => $this->page->course->id,
-            'sections' => $course_tree,
-        ]);
+        $this->content->text = <<<HTML
+            <div id="into_block_activity_tree_render_target"></div>
+            <script id="into_block_activity_tree_json" type="application/json">{$activity_tree}</script>
+            <script src="http://moodle.coursenav.local/blocks/activity_tree/static/js/build/activity_tree.js"></script>
+HTML;
         $this->content->footer = '';
         return $this->content;
     }

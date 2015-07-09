@@ -1,10 +1,10 @@
 <?php
 
+use block_activity_tree as B;
 use Functional as F;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once __DIR__ . '/../../../vendor/autoload.php';
 require_once __DIR__ . '/../lib.php';
 
 class activity_tree_lib_test extends advanced_testcase {
@@ -58,7 +58,7 @@ class activity_tree_lib_test extends advanced_testcase {
      */
     public function test_is_current_section_when_not_course_context() {
         $section_info = F\head($this->_section_info_all);
-        $result = is_current_section($section_info, 0, context_system::instance());
+        $result = B\is_current_section($section_info, 0, context_system::instance());
         $this->assertFalse($result);
     }
 
@@ -69,7 +69,7 @@ class activity_tree_lib_test extends advanced_testcase {
         $nine = 9;
         $section_info = F\head($this->_section_info_all);
         $this->assertNotEquals($nine, $section_info->section);
-        $result = is_current_section($section_info, $nine, context_course::instance($this->_course->id));
+        $result = B\is_current_section($section_info, $nine, context_course::instance($this->_course->id));
         $this->assertFalse($result);
     }
 
@@ -85,7 +85,7 @@ class activity_tree_lib_test extends advanced_testcase {
             }
         ));
         $this->assertEquals($five, $section_info->section);
-        $result = is_current_section($section_info, $five, context_course::instance($this->_course->id));
+        $result = B\is_current_section($section_info, $five, context_course::instance($this->_course->id));
         $this->assertTrue($result);
     }
 
@@ -95,7 +95,7 @@ class activity_tree_lib_test extends advanced_testcase {
     public function test_is_current_mod_when_course_context() {
         $section_info = F\head($this->_section_info_all);
         $cm_info = F\head($section_info->modinfo->cms);
-        $result = is_current_mod($cm_info, context_course::instance($this->_course->id));
+        $result = B\is_current_mod($cm_info, context_course::instance($this->_course->id));
         $this->assertFalse($result);
     }
 
@@ -110,7 +110,7 @@ class activity_tree_lib_test extends advanced_testcase {
                 return (integer)$cm_info->id === $this->_forum->cmid;
             }
         ));
-        $result = is_current_mod($cm_info, context_module::instance($this->_wiki->cmid));
+        $result = B\is_current_mod($cm_info, context_module::instance($this->_wiki->cmid));
         $this->assertFalse($result);
     }
 
@@ -125,82 +125,80 @@ class activity_tree_lib_test extends advanced_testcase {
                 return (integer)$cm_info->id === $this->_wiki->cmid;
             }
         ));
-        $result = is_current_mod($cm_info, context_module::instance($this->_wiki->cmid));
+        $result = B\is_current_mod($cm_info, context_module::instance($this->_wiki->cmid));
         $this->assertTrue($result);
     }
 
     /**
-     * tests get_course_tree returns [section_info, [cm_info, boolean], boolean]
+     * tests get_activity_tree returns an array of sections
      */
-    public function test_get_course_tree() {
-        $course_tree = get_course_tree(
+    public function test_get_activity_tree() {
+        $activity_tree = B\get_activity_tree(
             get_fast_modinfo($this->_course),
             -1,
             context_course::instance($this->_course->id)
         );
-        $this->assertTrue(is_array($course_tree));
-        $this->assertCount(1 + self::NUM_SECTIONS, $course_tree);
+        $this->assertTrue(is_array($activity_tree));
+        $this->assertCount(1 + self::NUM_SECTIONS, $activity_tree);
         $this->assertTrue(F\true(F\map(
-            $course_tree,
-            function (array $section) {
+            $activity_tree,
+            function (stdClass $section) {
                 return
-                    count($section) === 3
+                    is_integer($section->section)
                     &&
-                    $section[0] instanceof section_info
+                    is_string($section->name)
                     &&
-                    is_array($section[1])
+                    is_bool($section->current)
+                    &&
+                    is_array($section->activities)
                     &&
                     F\true(F\map(
-                        $section[1],
-                        function (array $module) {
+                        $section->activities,
+                        function (stdClass $activity) {
                             return
-                                count($module) == 2
+                                is_integer($activity->id)
                                 &&
-                                $module[0] instanceof cm_info
+                                is_string($activity->name)
                                 &&
-                                is_bool($module[1])
+                                is_string($activity->modname)
                                 &&
-                                $module[1] === false;
+                                is_bool($activity->current);
                         }
-                    ))
-                    &&
-                    is_bool($section[2])
-                    &&
-                    $section[2] === false;
+                    ));
             }
         )));
     }
 
     /**
-     * tests get_course_tree flags section zero
+     * tests get_activity_tree flags section zero
      */
-    public function test_get_course_tree_flags_section_zero() {
+    public function test_get_activity_tree_flags_section_zero() {
         $zero = 0;
-        $course_tree = get_course_tree(
+        $activity_tree = B\get_activity_tree(
             get_fast_modinfo($this->_course),
             $zero,
             context_course::instance($this->_course->id)
         );
-        $this->assertTrue($course_tree[$zero][2]);
+        $this->assertTrue($activity_tree[$zero]->current);
     }
 
     /**
-     * tests get_course_tree flags the current section
+     * tests get_activity_tree flags the current section
      */
-    public function test_get_course_tree_flags_current_section() {
+    public function test_get_activity_tree_flags_current_section() {
         $five = 5;
-        $course_tree = get_course_tree(
+        $activity_tree = B\get_activity_tree(
             get_fast_modinfo($this->_course),
             $five,
             context_course::instance($this->_course->id)
         );
-        $this->assertTrue($course_tree[$five][2]);
+        $this->assertTrue($activity_tree[$five]->current);
     }
 
     /**
-     * tests get_course_tree flags the current module
+     * tests get_activity_tree flags the current module
      */
-    public function test_get_course_tree_flags_current_module() {
+    public function test_get_activity_tree_flags_current_module() {
         $section_info = F\head($this->_section_info_all);
         $cm_info = F\head(F\filter(
             $section_info->modinfo->cms,
@@ -208,12 +206,12 @@ class activity_tree_lib_test extends advanced_testcase {
                 return (integer)$cm_info->id === $this->_wiki->cmid;
             }
         ));
-        $course_tree = get_course_tree(
+        $activity_tree = B\get_activity_tree(
             get_fast_modinfo($this->_course),
             -1,
             context_module::instance($this->_wiki->cmid)
         );
-        $this->assertTrue($course_tree[(integer)$cm_info->sectionnum][1][0][1]);
+        $this->assertTrue($activity_tree[(integer)$cm_info->sectionnum]->activities[0]->current);
     }
 
 }
