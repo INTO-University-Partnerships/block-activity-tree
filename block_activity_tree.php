@@ -17,6 +17,8 @@ class block_activity_tree extends block_base {
      * @return stdClass
      */
     public function get_content() {
+        global $CFG;
+
         // lazy initialization
         if (!empty($this->content)) {
             return $this->content;
@@ -29,12 +31,18 @@ class block_activity_tree extends block_base {
             $this->page->context
         ));
 
+        // if debugging, load unminified scripts
+        $script_src = $CFG->wwwroot . '/blocks/activity_tree/static/js/build/activity_tree.min.js';
+        if (debugging()) {
+            $script_src = str_replace('.min.js', '.js', $script_src);
+        }
+
         // render the activity tree
         $this->content = new stdClass();
         $this->content->text = <<<HTML
             <div id="into_block_activity_tree_render_target"></div>
             <script id="into_block_activity_tree_json" type="application/json">{$activity_tree}</script>
-            <script src="http://moodle.coursenav.local/blocks/activity_tree/static/js/build/activity_tree.js"></script>
+            <script src="{$script_src}"></script>
 HTML;
         $this->content->footer = '';
         return $this->content;
