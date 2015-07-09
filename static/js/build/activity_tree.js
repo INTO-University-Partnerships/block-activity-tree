@@ -131,7 +131,9 @@ var App = (function (_React$Component) {
             return _react2['default'].createElement(
                 'div',
                 { className: 'into-block-activity-tree' },
-                _lodash2['default'].map(this.props.activityTree, function (section) {
+                _lodash2['default'].map(_lodash2['default'].filter(this.props.activityTree, function (section) {
+                    return section.activities.length;
+                }), function (section) {
                     return _react2['default'].createElement(_Section2['default'], { key: section.section, section: section });
                 })
             );
@@ -178,15 +180,53 @@ var _Activity = require('./Activity');
 var _Activity2 = _interopRequireDefault(_Activity);
 
 var Section = (function (_React$Component) {
-    function Section() {
+
+    /**
+     * c'tor
+     * @param {object} props
+     */
+
+    function Section(props) {
         _classCallCheck(this, Section);
 
-        _get(Object.getPrototypeOf(Section.prototype), 'constructor', this).apply(this, arguments);
+        _get(Object.getPrototypeOf(Section.prototype), 'constructor', this).call(this, props);
+        this.state = {
+            expanded: _lodash2['default'].any(props.section.activities, function (activity) {
+                return activity.current;
+            })
+        };
     }
 
     _inherits(Section, _React$Component);
 
     _createClass(Section, [{
+        key: 'getActivitiesToRender',
+
+        /**
+         * gets activities to render (when expanded)
+         * @returns {?XML[]}
+         */
+        value: function getActivitiesToRender() {
+            if (this.state.expanded) {
+                return _lodash2['default'].map(this.props.section.activities, function (activity) {
+                    return _react2['default'].createElement(_Activity2['default'], { key: activity.id, activity: activity });
+                });
+            }
+            return null;
+        }
+    }, {
+        key: 'toggleExpanded',
+
+        /**
+         * toggles expanded state
+         */
+        value: function toggleExpanded() {
+            var expanded = !this.state.expanded;
+            this.setState({
+                expanded: expanded
+            });
+        }
+    }, {
         key: 'render',
 
         /**
@@ -201,11 +241,13 @@ var Section = (function (_React$Component) {
                 _react2['default'].createElement(
                     'div',
                     { style: { fontWeight: fontWeight } },
-                    this.props.section.name
+                    _react2['default'].createElement(
+                        'a',
+                        { href: 'javascript:;', className: 'toggle', onClick: _lodash2['default'].bind(this.toggleExpanded, this) },
+                        this.props.section.name
+                    )
                 ),
-                _lodash2['default'].map(this.props.section.activities, function (activity) {
-                    return _react2['default'].createElement(_Activity2['default'], { key: activity.id, activity: activity });
-                })
+                this.getActivitiesToRender()
             );
         }
     }]);

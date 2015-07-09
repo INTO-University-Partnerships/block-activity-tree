@@ -72,4 +72,134 @@ describe('Section', () => {
             expect(_.all(_.map(activityComponents, activityComponent => _.isObject(activityComponent.props.activity)))).toBeTruthy();
         });
     });
+
+    describe('initial expanded state', () => {
+        let section,
+            sectionComponent;
+
+        describe('when any of its activities is the current activity', () => {
+            beforeEach(() => {
+                section = {
+                    name: 'Section 0',
+                    section: 0,
+                    current: true,
+                    activities: [
+                        {
+                            id: 1,
+                            name: 'Forum 001',
+                            modname: 'forum',
+                            current: true
+                        }
+                    ]
+                };
+                sectionComponent = TestUtils.renderIntoDocument(
+                    <Section section={section}/>
+                );
+            });
+
+            afterEach(() => {
+                React.unmountComponentAtNode(React.findDOMNode(sectionComponent).parentElement);
+            });
+
+            it('should show itself expanded', () => {
+                expect(sectionComponent.state.expanded).toBeTruthy();
+            });
+        });
+
+        describe('when none of its activities are the current activity', () => {
+            beforeEach(() => {
+                section = {
+                    name: 'Section 0',
+                    section: 0,
+                    current: true,
+                    activities: [
+                        {
+                            id: 1,
+                            name: 'Forum 001',
+                            modname: 'forum',
+                            current: false
+                        }
+                    ]
+                };
+                sectionComponent = TestUtils.renderIntoDocument(
+                    <Section section={section}/>
+                );
+            });
+
+            afterEach(() => {
+                React.unmountComponentAtNode(React.findDOMNode(sectionComponent).parentElement);
+            });
+
+            it('should show itself collapsed', () => {
+                expect(sectionComponent.state.expanded).toBeFalsy();
+            });
+        });
+    });
+
+    describe('when clicked', () => {
+        let section,
+            sectionComponent;
+
+        describe('and its list of activities is collapsed', () => {
+            beforeEach(() => {
+                section = {
+                    name: 'Section 0',
+                    section: 0,
+                    current: true,
+                    activities: [
+                        {
+                            id: 1,
+                            name: 'Forum 001',
+                            modname: 'forum',
+                            current: false
+                        }
+                    ]
+                };
+                sectionComponent = TestUtils.renderIntoDocument(
+                    <Section section={section}/>
+                );
+                const link = TestUtils.findRenderedDOMComponentWithClass(sectionComponent, 'toggle');
+                TestUtils.Simulate.click(link);
+            });
+
+            afterEach(() => {
+                React.unmountComponentAtNode(React.findDOMNode(sectionComponent).parentElement);
+            });
+
+            it('should expand them', () => {
+                expect(sectionComponent.state.expanded).toBeTruthy();
+            });
+        });
+
+        describe('and its list of activities is expanded', () => {
+            beforeEach(() => {
+                section = {
+                    name: 'Section 0',
+                    section: 0,
+                    current: true,
+                    activities: [
+                        {
+                            id: 1,
+                            name: 'Forum 001',
+                            modname: 'forum',
+                            current: true
+                        }
+                    ]
+                };
+                sectionComponent = TestUtils.renderIntoDocument(
+                    <Section section={section}/>
+                );
+                const link = TestUtils.findRenderedDOMComponentWithClass(sectionComponent, 'toggle');
+                TestUtils.Simulate.click(link);
+            });
+
+            afterEach(() => {
+                React.unmountComponentAtNode(React.findDOMNode(sectionComponent).parentElement);
+            });
+
+            it('should collapse them', () => {
+                expect(sectionComponent.state.expanded).toBeFalsy();
+            });
+        });
+    });
 });

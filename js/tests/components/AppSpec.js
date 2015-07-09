@@ -24,19 +24,25 @@ describe('App', () => {
                     name: 'Section 0',
                     section: 0,
                     current: true,
-                    activities: []
+                    activities: [
+                        {}
+                    ]
                 },
                 {
                     name: 'Section 1',
                     section: 1,
                     current: false,
-                    activities: []
+                    activities: [
+                        {}
+                    ]
                 },
                 {
                     name: 'Section 2',
                     section: 2,
                     current: false,
-                    activities: []
+                    activities: [
+                        {}
+                    ]
                 }
             ];
             appComponent = TestUtils.renderIntoDocument(
@@ -65,6 +71,50 @@ describe('App', () => {
         it('should pass each "Section" component a section prop', () => {
             const sectionComponents = TestUtils.scryRenderedComponentsWithType(appComponent, Section);
             expect(_.all(_.map(sectionComponents, sectionComponent => _.isObject(sectionComponent.props.section)))).toBeTruthy();
+        });
+    });
+
+    describe('sections with no activities', () => {
+        let activityTree,
+            appComponent;
+
+        beforeEach(() => {
+            activityTree = [
+                {
+                    name: 'Section 0',
+                    section: 0,
+                    current: false,
+                    activities: [
+                    ]
+                },
+                {
+                    name: 'Section 1',
+                    section: 1,
+                    current: false,
+                    activities: [
+                    ]
+                },
+                {
+                    name: 'Section 2',
+                    section: 2,
+                    current: false,
+                    activities: [
+                        {}
+                    ]
+                }
+            ];
+            appComponent = TestUtils.renderIntoDocument(
+                <App activityTree={activityTree}/>
+            );
+        });
+
+        afterEach(() => {
+            React.unmountComponentAtNode(React.findDOMNode(appComponent).parentElement);
+        });
+
+        it('should render a "Section" component per section with at least one activity', () => {
+            const sectionComponents = TestUtils.scryRenderedComponentsWithType(appComponent, Section);
+            expect(_.size(sectionComponents)).toBe(_.size(_.filter(activityTree, section => section.activities.length)));
         });
     });
 });
