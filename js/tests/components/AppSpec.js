@@ -21,6 +21,7 @@ describe('App', () => {
         beforeEach(() => {
             activityTree = [
                 {
+                    id: 1,
                     name: 'Section 0',
                     section: 0,
                     current: true,
@@ -29,6 +30,7 @@ describe('App', () => {
                     ]
                 },
                 {
+                    id: 2,
                     name: 'Section 1',
                     section: 1,
                     current: false,
@@ -37,6 +39,7 @@ describe('App', () => {
                     ]
                 },
                 {
+                    id: 3,
                     name: 'Section 2',
                     section: 2,
                     current: false,
@@ -81,6 +84,7 @@ describe('App', () => {
         beforeEach(() => {
             activityTree = [
                 {
+                    id: 1,
                     name: 'Section 0',
                     section: 0,
                     current: false,
@@ -88,6 +92,7 @@ describe('App', () => {
                     ]
                 },
                 {
+                    id: 2,
                     name: 'Section 1',
                     section: 1,
                     current: false,
@@ -95,6 +100,7 @@ describe('App', () => {
                     ]
                 },
                 {
+                    id: 3,
                     name: 'Section 2',
                     section: 2,
                     current: false,

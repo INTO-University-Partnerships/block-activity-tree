@@ -2,6 +2,7 @@
 
 import React from 'react/addons';
 import _ from 'lodash';
+import Cookies from 'cookies-js';
 
 const TestUtils = React.addons.TestUtils;
 
@@ -20,6 +21,7 @@ describe('Section', () => {
 
         beforeEach(() => {
             section = {
+                id: 1,
                 name: 'Section 0',
                 section: 0,
                 current: true,
@@ -80,6 +82,7 @@ describe('Section', () => {
         describe('when any of its activities is the current activity', () => {
             beforeEach(() => {
                 section = {
+                    id: 1,
                     name: 'Section 0',
                     section: 0,
                     current: true,
@@ -109,6 +112,7 @@ describe('Section', () => {
         describe('when none of its activities are the current activity', () => {
             beforeEach(() => {
                 section = {
+                    id: 1,
                     name: 'Section 0',
                     section: 0,
                     current: true,
@@ -140,9 +144,14 @@ describe('Section', () => {
         let section,
             sectionComponent;
 
+        beforeEach(() => {
+            Cookies.expire('ExpandedSections');
+        });
+
         describe('and its list of activities is collapsed', () => {
             beforeEach(() => {
                 section = {
+                    id: 123,
                     name: 'Section 0',
                     section: 0,
                     current: true,
@@ -169,11 +178,18 @@ describe('Section', () => {
             it('should expand them', () => {
                 expect(sectionComponent.state.expanded).toBeTruthy();
             });
+
+            it('should set the section id in the cookie', () => {
+                const sectionIds = _.map(Cookies.get('ExpandedSections').split(','), id => parseInt(id));
+                expect(sectionIds).toEqual([123]);
+            });
         });
 
         describe('and its list of activities is expanded', () => {
             beforeEach(() => {
+                Cookies.set('ExpandedSections', '122,123,124');
                 section = {
+                    id: 123,
                     name: 'Section 0',
                     section: 0,
                     current: true,
@@ -199,6 +215,11 @@ describe('Section', () => {
 
             it('should collapse them', () => {
                 expect(sectionComponent.state.expanded).toBeFalsy();
+            });
+
+            it('should remove the section id from the cookie', () => {
+                const sectionIds = _.map(Cookies.get('ExpandedSections').split(','), id => parseInt(id));
+                expect(sectionIds).toEqual([122, 124]);
             });
         });
     });

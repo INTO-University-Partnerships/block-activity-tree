@@ -64,6 +64,7 @@ function get_activity_tree(\course_modinfo $modinfo, $section_number, \context $
                 }
             );
             return (object)[
+                'id'         => (integer)$section_info->id,
                 'section'    => (integer)$section_info->section,
                 'name'       => \get_section_name($section_info->modinfo->courseid, $section_info->section),
                 'current'    => is_current_section($section_info, $section_number, $context),

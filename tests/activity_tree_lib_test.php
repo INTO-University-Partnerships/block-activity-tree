@@ -144,6 +144,8 @@ class activity_tree_lib_test extends advanced_testcase {
             $activity_tree,
             function (stdClass $section) {
                 return
+                    is_integer($section->id)
+                    &&
                     is_integer($section->section)
                     &&
                     is_string($section->name)
