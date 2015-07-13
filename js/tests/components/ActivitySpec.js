@@ -6,10 +6,24 @@ import _ from 'lodash';
 const TestUtils = React.addons.TestUtils;
 
 describe('Activity', () => {
-    let Activity;
+    let xhr,
+        requests,
+        Activity;
 
     beforeEach(() => {
+        // fake xhrs
+        xhr = sinon.useFakeXMLHttpRequest();
+        requests = [];
+        xhr.onCreate = x => {
+            requests.push(x);
+        };
+
+        // require components
         Activity = require('../../components/Activity.js');
+    });
+
+    afterEach(() => {
+        xhr.restore();
     });
 
     describe('layout and initialization', () => {
@@ -21,7 +35,9 @@ describe('Activity', () => {
                 id: 17,
                 name: 'Forum 001',
                 modname: 'forum',
-                current: true
+                current: true,
+                canComplete: false,
+                hasCompleted: false
             };
             activityComponent = TestUtils.renderIntoDocument(
                 <Activity activity={activity}/>
@@ -53,6 +69,110 @@ describe('Activity', () => {
             expect(_.size(links)).toBe(1);
             const link = _.head(links);
             expect(link.props.children).toBe(activity.name);
+        });
+    });
+
+    describe('manual completion', () => {
+        let activity,
+            activityComponent;
+
+        afterEach(() => {
+            React.unmountComponentAtNode(React.findDOMNode(activityComponent).parentElement);
+        });
+
+        describe('when an activity cannot be completed', () => {
+            beforeEach(() => {
+                activity = {
+                    id: 17,
+                    name: 'Forum 001',
+                    modname: 'forum',
+                    current: true,
+                    canComplete: false,
+                    hasCompleted: false
+                };
+                activityComponent = TestUtils.renderIntoDocument(
+                    <Activity activity={activity}/>
+                );
+            });
+
+            it('should not render a manual completion checkbox', () => {
+                const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
+                expect(_.size(inputs)).toBe(0);
+            });
+        });
+
+        describe('when an activity can be completed, but has not yet been completed', () => {
+            beforeEach(() => {
+                activity = {
+                    id: 17,
+                    name: 'Forum 001',
+                    modname: 'forum',
+                    current: true,
+                    canComplete: true,
+                    hasCompleted: false
+                };
+                activityComponent = TestUtils.renderIntoDocument(
+                    <Activity activity={activity}/>
+                );
+            });
+
+            it('should render a manual completion checkbox', () => {
+                const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
+                expect(_.size(inputs)).toBe(1);
+                expect(_.head(inputs).props.type).toBe('checkbox');
+            });
+
+            it('should not check the checkbox initially', () => {
+                const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
+                expect(_.size(inputs)).toBe(1);
+                expect(_.head(inputs).props.checked).toBeFalsy();
+            });
+
+            it('should invoke a JSON endpoint (to mark the activity as complete) when the checkbox is clicked', () => {
+                const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
+                TestUtils.Simulate.change(React.findDOMNode(_.head(inputs)));
+                expect(_.size(requests)).toBe(1);
+                expect(_.head(requests).url).toBe('/course/togglecompletion.php');
+                expect(_.head(requests).method).toBe('POST');
+                expect(_.head(requests).requestBody).toMatch(/completionstate=1/);
+            });
+        });
+
+        describe('when an activity can be completed, and has been completed', () => {
+            beforeEach(() => {
+                activity = {
+                    id: 17,
+                    name: 'Forum 001',
+                    modname: 'forum',
+                    current: true,
+                    canComplete: true,
+                    hasCompleted: true
+                };
+                activityComponent = TestUtils.renderIntoDocument(
+                    <Activity activity={activity}/>
+                );
+            });
+
+            it('should render a manual completion checkbox', () => {
+                const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
+                expect(_.size(inputs)).toBe(1);
+                expect(_.head(inputs).props.type).toBe('checkbox');
+            });
+
+            it('should check the checkbox initially', () => {
+                const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
+                expect(_.size(inputs)).toBe(1);
+                expect(_.head(inputs).props.checked).toBeTruthy();
+            });
+
+            it('should invoke a JSON endpoint (to mark the activity as incomplete) when the checkbox is clicked', () => {
+                const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
+                TestUtils.Simulate.change(React.findDOMNode(_.head(inputs)));
+                expect(_.size(requests)).toBe(1);
+                expect(_.head(requests).url).toBe('/course/togglecompletion.php');
+                expect(_.head(requests).method).toBe('POST');
+                expect(_.head(requests).requestBody).toMatch(/completionstate=0/);
+            });
         });
     });
 });

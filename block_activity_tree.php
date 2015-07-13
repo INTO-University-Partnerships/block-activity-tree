@@ -24,12 +24,18 @@ class block_activity_tree extends block_base {
             return $this->content;
         }
 
-        // get the activity tree as JSON
-        $activity_tree = json_encode(block_activity_tree\get_activity_tree(
+        // get the activity tree JSON
+        $activity_tree_json = json_encode(block_activity_tree\get_activity_tree(
             get_fast_modinfo($this->page->course),
             optional_param('section', -1, PARAM_INT),
             $this->page->context
         ));
+
+        // get the activity tree config
+        $activity_tree_config = json_encode((object)[
+            'wwwroot' => $CFG->wwwroot,
+            'sesskey' => sesskey(),
+        ]);
 
         // if debugging, load unminified scripts
         $script_src = $CFG->wwwroot . '/blocks/activity_tree/static/js/build/activity_tree.min.js';
@@ -41,7 +47,8 @@ class block_activity_tree extends block_base {
         $this->content = new stdClass();
         $this->content->text = <<<HTML
             <div id="into_block_activity_tree_render_target"></div>
-            <script id="into_block_activity_tree_json" type="application/json">{$activity_tree}</script>
+            <script id="into_block_activity_tree_json" type="application/json">{$activity_tree_json}</script>
+            <script id="into_block_activity_tree_config" type="application/json">{$activity_tree_config}</script>
             <script src="{$script_src}"></script>
 HTML;
         $this->content->footer = '';

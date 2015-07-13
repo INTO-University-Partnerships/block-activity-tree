@@ -30,19 +30,25 @@ describe('Section', () => {
                         id: 1,
                         name: 'Forum 001',
                         modname: 'forum',
-                        current: true
+                        current: true,
+                        canComplete: false,
+                        hasCompleted: false
                     },
                     {
                         id: 2,
                         name: 'Wiki 001',
                         modname: 'wiki',
-                        current: false
+                        current: false,
+                        canComplete: false,
+                        hasCompleted: false
                     },
                     {
                         id: 3,
                         name: 'Url 001',
                         modname: 'url',
-                        current: false
+                        current: false,
+                        canComplete: false,
+                        hasCompleted: false
                     }
                 ]
             };
@@ -91,7 +97,9 @@ describe('Section', () => {
                             id: 1,
                             name: 'Forum 001',
                             modname: 'forum',
-                            current: true
+                            current: true,
+                            canComplete: false,
+                            hasCompleted: false
                         }
                     ]
                 };
@@ -121,7 +129,9 @@ describe('Section', () => {
                             id: 1,
                             name: 'Forum 001',
                             modname: 'forum',
-                            current: false
+                            current: false,
+                            canComplete: false,
+                            hasCompleted: false
                         }
                     ]
                 };
@@ -160,7 +170,9 @@ describe('Section', () => {
                             id: 1,
                             name: 'Forum 001',
                             modname: 'forum',
-                            current: false
+                            current: false,
+                            canComplete: false,
+                            hasCompleted: false
                         }
                     ]
                 };
@@ -198,7 +210,9 @@ describe('Section', () => {
                             id: 1,
                             name: 'Forum 001',
                             modname: 'forum',
-                            current: true
+                            current: true,
+                            canComplete: false,
+                            hasCompleted: false
                         }
                     ]
                 };

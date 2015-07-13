@@ -35,18 +35,24 @@ class activity_tree_lib_test extends advanced_testcase {
      * setUp
      */
     public function setUp() {
+        global $CFG;
+        require_once $CFG->libdir . '/completionlib.php';
+        $CFG->enablecompletion = true;
         $this->_course = $this->getDataGenerator()->create_course([
             'numsections' => self::NUM_SECTIONS,
+            'enablecompletion' => COMPLETION_ENABLED,
         ], [
             'createsections' => true,
         ]);
         $this->_forum = $this->getDataGenerator()->create_module('forum', [
             'course' => $this->_course->id,
             'section' => 5,
+            'completion' => COMPLETION_TRACKING_NONE,
         ]);
         $this->_wiki = $this->getDataGenerator()->create_module('wiki', [
             'course' => $this->_course->id,
             'section' => 6,
+            'completion' => COMPLETION_TRACKING_MANUAL,
         ]);
         $course_modinfo = get_fast_modinfo($this->_course);
         $this->_section_info_all = $course_modinfo->get_section_info_all();
@@ -164,7 +170,15 @@ class activity_tree_lib_test extends advanced_testcase {
                                 &&
                                 is_string($activity->modname)
                                 &&
-                                is_bool($activity->current);
+                                is_bool($activity->current)
+                                &&
+                                is_bool($activity->canComplete)
+                                &&
+                                $activity->canComplete === false
+                                &&
+                                is_bool($activity->hasCompleted)
+                                &&
+                                $activity->hasCompleted === false;
                         }
                     ));
             }
@@ -214,6 +228,114 @@ class activity_tree_lib_test extends advanced_testcase {
             context_module::instance($this->_wiki->cmid)
         );
         $this->assertTrue($activity_tree[(integer)$cm_info->sectionnum]->activities[0]->current);
+    }
+
+    /**
+     * tests get_activity_tree flags activities which can be manually completed
+     * (according to standard Moodle configuration)
+     */
+    public function test_get_activity_tree_flags_activities_which_can_be_manually_completed() {
+        // log in a (non-guest) user
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // ensure the activity configured with manual completion settings can be completed
+        $section_info = F\head($this->_section_info_all);
+        $cm_info = F\head(F\filter(
+            $section_info->modinfo->cms,
+            function (cm_info $cm_info) {
+                return (integer)$cm_info->id === $this->_wiki->cmid;
+            }
+        ));
+        $this->assertEquals(COMPLETION_TRACKING_MANUAL, $cm_info->completion);
+        $activity_tree = B\get_activity_tree(
+            get_fast_modinfo($this->_course),
+            -1,
+            context_module::instance($this->_wiki->cmid)
+        );
+        $this->assertTrue($activity_tree[(integer)$cm_info->sectionnum]->activities[0]->canComplete);
+    }
+
+    /**
+     * tests get_activity_tree flags activities which cannot be manually completed
+     * (according to standard Moodle configuration)
+     */
+    public function test_get_activity_tree_flags_activities_which_cannot_be_manually_completed() {
+        // log in a (non-guest) user
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // ensure the activity configured with no completion settings cannot be completed
+        $section_info = F\head($this->_section_info_all);
+        $cm_info = F\head(F\filter(
+            $section_info->modinfo->cms,
+            function (cm_info $cm_info) {
+                return (integer)$cm_info->id === $this->_forum->cmid;
+            }
+        ));
+        $this->assertEquals(COMPLETION_TRACKING_NONE, $cm_info->completion);
+        $activity_tree = B\get_activity_tree(
+            get_fast_modinfo($this->_course),
+            -1,
+            context_module::instance($this->_forum->cmid)
+        );
+        $this->assertFalse($activity_tree[(integer)$cm_info->sectionnum]->activities[0]->canComplete);
+    }
+
+    /**
+     * tests get_activity_tree flags activities which have been manually completed
+     * (by the logged in user)
+     */
+    public function test_get_activity_tree_flags_activities_which_have_been_manually_completed() {
+        // log in a (non-guest) user
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // ensure the activity configured with manual completion settings has been completed
+        $section_info = F\head($this->_section_info_all);
+        $cm_info = F\head(F\filter(
+            $section_info->modinfo->cms,
+            function (cm_info $cm_info) {
+                return (integer)$cm_info->id === $this->_wiki->cmid;
+            }
+        ));
+        $this->assertEquals(COMPLETION_TRACKING_MANUAL, $cm_info->completion);
+        $completion = new completion_info($this->_course);
+        $completion->update_state($cm_info, COMPLETION_COMPLETE);
+        $activity_tree = B\get_activity_tree(
+            get_fast_modinfo($this->_course),
+            -1,
+            context_module::instance($this->_wiki->cmid)
+        );
+        $this->assertTrue($activity_tree[(integer)$cm_info->sectionnum]->activities[0]->hasCompleted);
+    }
+
+    /**
+     * tests get_activity_tree flags activities which have not been manually completed
+     * (by the logged in user)
+     */
+    public function test_get_activity_tree_flags_activities_which_have_not_been_manually_completed() {
+        // log in a (non-guest) user
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // ensure the activity configured with manual completion settings has been completed
+        $section_info = F\head($this->_section_info_all);
+        $cm_info = F\head(F\filter(
+            $section_info->modinfo->cms,
+            function (cm_info $cm_info) {
+                return (integer)$cm_info->id === $this->_wiki->cmid;
+            }
+        ));
+        $this->assertEquals(COMPLETION_TRACKING_MANUAL, $cm_info->completion);
+        $completion = new completion_info($this->_course);
+        $completion->update_state($cm_info, COMPLETION_INCOMPLETE);
+        $activity_tree = B\get_activity_tree(
+            get_fast_modinfo($this->_course),
+            -1,
+            context_module::instance($this->_wiki->cmid)
+        );
+        $this->assertFalse($activity_tree[(integer)$cm_info->sectionnum]->activities[0]->hasCompleted);
     }
 
 }

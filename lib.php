@@ -44,9 +44,10 @@ function is_current_mod(\cm_info $cm_info, \context $context) {
  * @return array
  */
 function get_activity_tree(\course_modinfo $modinfo, $section_number, \context $context) {
+    $completion_info = new \completion_info($modinfo->get_course());
     return F\map(
         $modinfo->get_section_info_all(),
-        function (\section_info $section_info) use ($section_number, $context) {
+        function (\section_info $section_info) use ($completion_info, $section_number, $context) {
             $mods = F\map(
                 F\filter(
                     $section_info->modinfo->cms,
@@ -54,12 +55,28 @@ function get_activity_tree(\course_modinfo $modinfo, $section_number, \context $
                         return (integer)$cm_info->sectionnum === (integer)$section_info->section;
                     }
                 ),
-                function (\cm_info $cm_info) use ($context) {
+                function (\cm_info $cm_info) use ($completion_info, $context) {
+                    $canComplete =
+                        isloggedin()
+                        &&
+                        !isguestuser()
+                        &&
+                        (integer)$completion_info->is_enabled($cm_info) === COMPLETION_TRACKING_MANUAL;
+                    $hasCompleted = false;
+                    if ($canComplete) {
+                        $completion_data = $completion_info->get_data($cm_info, true);
+                        $hasCompleted = F\contains(
+                            [COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS],
+                            (integer)$completion_data->completionstate
+                        );
+                    }
                     return (object)[
-                        'id'      => (integer)$cm_info->id,
-                        'name'    => $cm_info->name,
-                        'modname' => $cm_info->modname,
-                        'current' => is_current_mod($cm_info, $context),
+                        'id'           => (integer)$cm_info->id,
+                        'name'         => $cm_info->name,
+                        'modname'      => $cm_info->modname,
+                        'current'      => is_current_mod($cm_info, $context),
+                        'canComplete'  => $canComplete,
+                        'hasCompleted' => $hasCompleted,
                     ];
                 }
             );

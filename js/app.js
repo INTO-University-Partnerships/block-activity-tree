@@ -3,8 +3,7 @@
 import React from 'react';
 import App from './components/App';
 
-const elem = document.querySelector('#into_block_activity_tree_json');
-const activityTree = JSON.parse(elem.innerHTML);
+const activityTree = JSON.parse(document.querySelector('#into_block_activity_tree_json').innerHTML);
 
 React.render(
     <App activityTree={activityTree}/>,
