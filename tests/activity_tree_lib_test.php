@@ -44,6 +44,12 @@ class activity_tree_lib_test extends advanced_testcase {
         ], [
             'createsections' => true,
         ]);
+        set_section_visible($this->_course->id, 4, 0);
+        $this->getDataGenerator()->create_module('forum', [
+            'course' => $this->_course->id,
+            'section' => 4,
+            'completion' => COMPLETION_TRACKING_NONE,
+        ]);
         $this->_forum = $this->getDataGenerator()->create_module('forum', [
             'course' => $this->_course->id,
             'section' => 5,
@@ -53,6 +59,12 @@ class activity_tree_lib_test extends advanced_testcase {
             'course' => $this->_course->id,
             'section' => 6,
             'completion' => COMPLETION_TRACKING_MANUAL,
+        ]);
+        $this->getDataGenerator()->create_module('quiz', [
+            'course' => $this->_course->id,
+            'section' => 6,
+            'completion' => COMPLETION_TRACKING_NONE,
+            'visible' => 0,
         ]);
         $course_modinfo = get_fast_modinfo($this->_course);
         $this->_section_info_all = $course_modinfo->get_section_info_all();
@@ -145,7 +157,7 @@ class activity_tree_lib_test extends advanced_testcase {
             context_course::instance($this->_course->id)
         );
         $this->assertTrue(is_array($activity_tree));
-        $this->assertCount(1 + self::NUM_SECTIONS, $activity_tree);
+        $this->assertCount(1 + self::NUM_SECTIONS - 1, $activity_tree);  // -1 since there's one hidden section
         $this->assertTrue(F\true(F\map(
             $activity_tree,
             function (stdClass $section) {
@@ -336,6 +348,102 @@ class activity_tree_lib_test extends advanced_testcase {
             context_module::instance($this->_wiki->cmid)
         );
         $this->assertFalse($activity_tree[(integer)$cm_info->sectionnum]->activities[0]->hasCompleted);
+    }
+
+    /**
+     * tests get_activity_tree does not return any hidden activities
+     * @global moodle_database $DB
+     */
+    public function test_get_activity_tree_ignores_hidden_activities() {
+        global $DB;
+        $activity_tree = B\get_activity_tree(
+            get_fast_modinfo($this->_course),
+            -1,
+            context_course::instance($this->_course->id)
+        );
+
+        // get the section id (as opposed to the section number) of section number six
+        $six = 6;
+        $section_id = (integer)$DB->get_field('course_sections', 'id', [
+            'course' => $this->_course->id,
+            'section' => $six,
+        ]);
+
+        // there are two activities in section six
+        $this->assertEquals(2, $DB->count_records('course_modules', [
+            'course' => $this->_course->id,
+            'section' => $section_id,
+        ]));
+
+        // however, there is only one visible activity in section six
+        $this->assertEquals(1, $DB->count_records('course_modules', [
+            'course' => $this->_course->id,
+            'section' => $section_id,
+            'visible' => 1,
+        ]));
+        $this->assertCount(1, $activity_tree[$six]->activities);
+    }
+
+    /**
+     * tests get_activity_tree does not return any hidden sections
+     * @global moodle_database $DB
+     */
+    public function test_get_activity_tree_ignores_hidden_sections() {
+        global $DB;
+        $activity_tree = B\get_activity_tree(
+            get_fast_modinfo($this->_course),
+            -1,
+            context_course::instance($this->_course->id)
+        );
+
+        // get the section id (as opposed to the section number) of section number four
+        $four = 4;
+        $section_id = (integer)$DB->get_field('course_sections', 'id', [
+            'course' => $this->_course->id,
+            'section' => $four,
+        ]);
+
+        // there is at least one activity in section four
+        $this->assertGreaterThan(0, $DB->count_records('course_modules', [
+            'course' => $this->_course->id,
+            'section' => $section_id,
+        ]));
+
+        // however, as section four is not visible, it is not returned in the activity tree
+        $this->assertTrue($DB->record_exists('course_sections', [
+            'course' => $this->_course->id,
+            'section' => $four,
+            'visible' => 0,
+        ]));
+        $this->assertArrayNotHasKey($four, $activity_tree);
+    }
+
+    /**
+     * tests get_activity_tree returns sections even if they're empty (i.e. have no activities)
+     */
+    public function test_get_activity_tree_returns_empty_sections() {
+        global $DB;
+        $activity_tree = B\get_activity_tree(
+            get_fast_modinfo($this->_course),
+            -1,
+            context_course::instance($this->_course->id)
+        );
+
+        // get the section id (as opposed to the section number) of section number two
+        $two = 2;
+        $section_id = (integer)$DB->get_field('course_sections', 'id', [
+            'course' => $this->_course->id,
+            'section' => $two,
+        ]);
+
+        // there are no activities in section two
+        $this->assertEquals(0, $DB->count_records('course_modules', [
+            'course' => $this->_course->id,
+            'section' => $section_id,
+        ]));
+
+        // however, section two is still returned in the activity tree
+        $this->assertArrayHasKey($two, $activity_tree);
     }
 
 }

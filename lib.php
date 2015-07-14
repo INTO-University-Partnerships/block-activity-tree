@@ -46,13 +46,18 @@ function is_current_mod(\cm_info $cm_info, \context $context) {
 function get_activity_tree(\course_modinfo $modinfo, $section_number, \context $context) {
     $completion_info = new \completion_info($modinfo->get_course());
     return F\map(
-        $modinfo->get_section_info_all(),
+        F\filter(
+            $modinfo->get_section_info_all(),
+            function (\section_info $section_info) {
+                return $section_info->visible;
+            }
+        ),
         function (\section_info $section_info) use ($completion_info, $section_number, $context) {
             $mods = F\map(
                 F\filter(
                     $section_info->modinfo->cms,
                     function (\cm_info $cm_info) use ($section_info) {
-                        return (integer)$cm_info->sectionnum === (integer)$section_info->section;
+                        return $cm_info->visible && (integer)$cm_info->sectionnum === (integer)$section_info->section;
                     }
                 ),
                 function (\cm_info $cm_info) use ($completion_info, $context) {
