@@ -1,10 +1,12 @@
 'use strict';
 
-import React from 'react';
+import React from 'react/addons';
 import _ from 'lodash';
 import Cookies from 'cookies-js';
+import classNames from 'classnames';
 import Activity from './Activity';
 
+const ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 const COOKIE_KEY = 'ExpandedSections';
 
 export default class Section extends React.Component {
@@ -33,14 +35,16 @@ export default class Section extends React.Component {
     }
 
     /**
-     * gets activities to render (when expanded)
-     * @returns {?XML[]}
+     * gets activities to render
+     * @returns {XML}
      */
     getActivitiesToRender() {
-        if (this.state.expanded) {
-            return _.map(this.props.section.activities, activity => <Activity key={activity.id} activity={activity}/>);
-        }
-        return null;
+        const items = this.state.expanded ? _.map(this.props.section.activities, activity => <Activity key={activity.id} activity={activity}/>) : [];
+        return (
+            <ReactCSSTransitionGroup transitionName="activities">
+                {items}
+            </ReactCSSTransitionGroup>
+        );
     }
 
     /**
@@ -82,10 +86,12 @@ export default class Section extends React.Component {
      * @returns {XML}
      */
     render() {
-        const fontWeight = this.props.section.current ? 'bold' : 'normal';
+        const cn = classNames({
+            'current': this.props.section.current
+        });
         return (
             <div className="section">
-                <div style={{fontWeight: fontWeight}}>
+                <div className={cn}>
                     <a href="javascript:;" className="toggle" onClick={_.bind(this.toggleExpanded, this)}>{this.props.section.name}</a>
                 </div>
                 {this.getActivitiesToRender()}

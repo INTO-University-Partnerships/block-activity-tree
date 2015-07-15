@@ -2,6 +2,7 @@
 
 import React from 'react';
 import _ from 'lodash';
+import classNames from 'classnames';
 import {toggleCompletion} from '../WebAPI';
 import Config from '../Config';
 
@@ -52,11 +53,14 @@ export default class Activity extends React.Component {
      * @returns {XML}
      */
     render() {
-        const fontWeight = this.props.activity.current ? 'bold' : 'normal';
+        const cn = classNames({
+            'pull-left': true,
+            'current': this.props.activity.current
+        });
         const href = `${Config.wwwroot}/mod/${this.props.activity.modname}/view.php?id=${this.props.activity.id}`;
         return (
-            <div className="activity" style={{marginLeft: '20px'}}>
-                <div className="pull-left" style={{fontWeight: fontWeight}}>
+            <div className="activity">
+                <div className={cn}>
                     <a href={href}>{this.props.activity.name}</a>
                 </div>
                 {this.getManualCompletionCheckboxToRender()}

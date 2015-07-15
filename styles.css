@@ -1,0 +1,33 @@
+/* begin 'Section' and 'Activity' components */
+.block_activity_tree .activity {
+    margin-left: 20px;
+}
+
+.block_activity_tree .section .current,
+.block_activity_tree .activity .current {
+    font-weight: bold;
+}
+/* end 'Section' and 'Activity' components */
+
+/* begin 'ReactCSSTransitionGroup' component in 'Section' component */
+.block_activity_tree .activities-enter {
+    transition: all 0.8s ease-in;
+}
+
+.block_activity_tree .activities-leave {
+    transition: all 0.4s ease-out;
+}
+
+.block_activity_tree .activities-leave,
+.block_activity_tree .activities-enter.activities-enter-active {
+    opacity: 1;
+    max-height: 100px;
+}
+
+.block_activity_tree .activities-enter,
+.block_activity_tree .activities-leave.activities-leave-active {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+}
+/* end 'ReactCSSTransitionGroup' component in 'Section' component */
