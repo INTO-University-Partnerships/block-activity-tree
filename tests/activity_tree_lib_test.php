@@ -38,23 +38,42 @@ class activity_tree_lib_test extends advanced_testcase {
         global $CFG;
         require_once $CFG->libdir . '/completionlib.php';
         $CFG->enablecompletion = true;
+        $CFG->enableavailability = true;
         $this->_course = $this->getDataGenerator()->create_course([
             'numsections' => self::NUM_SECTIONS,
             'enablecompletion' => COMPLETION_ENABLED,
         ], [
             'createsections' => true,
         ]);
+
+        // section with an unavailable activity
+        $this->getDataGenerator()->create_module('forum', [
+            'course' => $this->_course->id,
+            'section' => 3,
+            'completion' => COMPLETION_TRACKING_NONE,
+            'availability' => json_encode([
+                'op' => core_availability\tree::OP_AND,
+                'c' => [availability_date\condition::get_json('>=', time() + 24 * 3600)],
+                'showc' => [true]
+            ])
+        ]);
+
+        // a hidden section
         set_section_visible($this->_course->id, 4, 0);
         $this->getDataGenerator()->create_module('forum', [
             'course' => $this->_course->id,
             'section' => 4,
             'completion' => COMPLETION_TRACKING_NONE,
         ]);
+
+        // section with one activity
         $this->_forum = $this->getDataGenerator()->create_module('forum', [
             'course' => $this->_course->id,
             'section' => 5,
             'completion' => COMPLETION_TRACKING_NONE,
         ]);
+
+        // section with two activities
         $this->_wiki = $this->getDataGenerator()->create_module('wiki', [
             'course' => $this->_course->id,
             'section' => 6,
@@ -66,6 +85,7 @@ class activity_tree_lib_test extends advanced_testcase {
             'completion' => COMPLETION_TRACKING_NONE,
             'visible' => 0,
         ]);
+
         $course_modinfo = get_fast_modinfo($this->_course);
         $this->_section_info_all = $course_modinfo->get_section_info_all();
         $this->resetAfterTest();
@@ -382,6 +402,35 @@ class activity_tree_lib_test extends advanced_testcase {
             'visible' => 1,
         ]));
         $this->assertCount(1, $activity_tree[$six]->activities);
+    }
+
+    /**
+     * tests get_activity_tree does not return any unavailable activities
+     * @global moodle_database $DB
+     */
+    public function test_get_activity_tree_ignores_unavailable_activities() {
+        global $DB;
+        $activity_tree = B\get_activity_tree(
+            get_fast_modinfo($this->_course),
+            -1,
+            context_course::instance($this->_course->id)
+        );
+
+        // get the section id (as opposed to the section number) of section number three
+        $three = 3;
+        $section_id = (integer)$DB->get_field('course_sections', 'id', [
+            'course' => $this->_course->id,
+            'section' => $three,
+        ]);
+
+        // there is one activity in section three
+        $this->assertEquals(1, $DB->count_records('course_modules', [
+            'course' => $this->_course->id,
+            'section' => $section_id,
+        ]));
+
+        // however, there are no available activities in section three
+        $this->assertCount(0, $activity_tree[$three]->activities);
     }
 
     /**

@@ -57,7 +57,12 @@ function get_activity_tree(\course_modinfo $modinfo, $section_number, \context $
                 F\filter(
                     $section_info->modinfo->cms,
                     function (\cm_info $cm_info) use ($section_info) {
-                        return $cm_info->visible && (integer)$cm_info->sectionnum === (integer)$section_info->section;
+                        return
+                            $cm_info->visible
+                            &&
+                            $cm_info->available
+                            &&
+                            (integer)$cm_info->sectionnum === (integer)$section_info->section;
                     }
                 ),
                 function (\cm_info $cm_info) use ($completion_info, $context) {
