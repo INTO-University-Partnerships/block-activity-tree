@@ -19,6 +19,11 @@ class activity_tree_lib_test extends advanced_testcase {
     /**
      * @var stdClass
      */
+    protected $_quiz;
+
+    /**
+     * @var stdClass
+     */
     protected $_forum;
 
     /**
@@ -37,8 +42,12 @@ class activity_tree_lib_test extends advanced_testcase {
     public function setUp() {
         global $CFG;
         require_once $CFG->libdir . '/completionlib.php';
+
+        // turn on completion and availability
         $CFG->enablecompletion = true;
         $CFG->enableavailability = true;
+
+        // create a course
         $this->_course = $this->getDataGenerator()->create_course([
             'numsections' => self::NUM_SECTIONS,
             'enablecompletion' => COMPLETION_ENABLED,
@@ -46,8 +55,18 @@ class activity_tree_lib_test extends advanced_testcase {
             'createsections' => true,
         ]);
 
-        // section with an unavailable activity
+        // section with two unavailable activities (an invisible forum and a visible quiz)
         $this->getDataGenerator()->create_module('forum', [
+            'course' => $this->_course->id,
+            'section' => 3,
+            'completion' => COMPLETION_TRACKING_NONE,
+            'availability' => json_encode([
+                'op' => core_availability\tree::OP_AND,
+                'c' => [availability_date\condition::get_json('>=', time() + 24 * 3600)],
+                'showc' => [false]
+            ])
+        ]);
+        $this->_quiz = $this->getDataGenerator()->create_module('quiz', [
             'course' => $this->_course->id,
             'section' => 3,
             'completion' => COMPLETION_TRACKING_NONE,
@@ -204,6 +223,8 @@ class activity_tree_lib_test extends advanced_testcase {
                                 &&
                                 is_bool($activity->current)
                                 &&
+                                is_bool($activity->available)
+                                &&
                                 is_bool($activity->canComplete)
                                 &&
                                 $activity->canComplete === false
@@ -259,7 +280,7 @@ class activity_tree_lib_test extends advanced_testcase {
             -1,
             context_module::instance($this->_wiki->cmid)
         );
-        $this->assertTrue($activity_tree[(integer)$cm_info->sectionnum]->activities[0]->current);
+        $this->assertTrue(F\head($activity_tree[(integer)$cm_info->sectionnum]->activities)->current);
     }
 
     /**
@@ -285,7 +306,7 @@ class activity_tree_lib_test extends advanced_testcase {
             -1,
             context_module::instance($this->_wiki->cmid)
         );
-        $this->assertTrue($activity_tree[(integer)$cm_info->sectionnum]->activities[0]->canComplete);
+        $this->assertTrue(F\head($activity_tree[(integer)$cm_info->sectionnum]->activities)->canComplete);
     }
 
     /**
@@ -311,7 +332,7 @@ class activity_tree_lib_test extends advanced_testcase {
             -1,
             context_module::instance($this->_forum->cmid)
         );
-        $this->assertFalse($activity_tree[(integer)$cm_info->sectionnum]->activities[0]->canComplete);
+        $this->assertFalse(F\head($activity_tree[(integer)$cm_info->sectionnum]->activities)->canComplete);
     }
 
     /**
@@ -339,7 +360,7 @@ class activity_tree_lib_test extends advanced_testcase {
             -1,
             context_module::instance($this->_wiki->cmid)
         );
-        $this->assertTrue($activity_tree[(integer)$cm_info->sectionnum]->activities[0]->hasCompleted);
+        $this->assertTrue(F\head($activity_tree[(integer)$cm_info->sectionnum]->activities)->hasCompleted);
     }
 
     /**
@@ -367,7 +388,7 @@ class activity_tree_lib_test extends advanced_testcase {
             -1,
             context_module::instance($this->_wiki->cmid)
         );
-        $this->assertFalse($activity_tree[(integer)$cm_info->sectionnum]->activities[0]->hasCompleted);
+        $this->assertFalse(F\head($activity_tree[(integer)$cm_info->sectionnum]->activities)->hasCompleted);
     }
 
     /**
@@ -405,10 +426,10 @@ class activity_tree_lib_test extends advanced_testcase {
     }
 
     /**
-     * tests get_activity_tree does not return any unavailable activities
+     * tests get_activity_tree returns unavailable activities (that are configured to be visible)
      * @global moodle_database $DB
      */
-    public function test_get_activity_tree_ignores_unavailable_activities() {
+    public function test_get_activity_tree_returns_unavailable_activities() {
         global $DB;
         $activity_tree = B\get_activity_tree(
             get_fast_modinfo($this->_course),
@@ -423,14 +444,16 @@ class activity_tree_lib_test extends advanced_testcase {
             'section' => $three,
         ]);
 
-        // there is one activity in section three
-        $this->assertEquals(1, $DB->count_records('course_modules', [
+        // there are two (unavailable) activities in section three
+        $this->assertEquals(2, $DB->count_records('course_modules', [
             'course' => $this->_course->id,
             'section' => $section_id,
         ]));
 
-        // however, there are no available activities in section three
-        $this->assertCount(0, $activity_tree[$three]->activities);
+        // however, there is only one visible activity in section three
+        $this->assertCount(1, $activity_tree[$three]->activities);
+        $this->assertEquals($this->_quiz->cmid, F\head($activity_tree[$three]->activities)->id);
+        $this->assertFalse(F\head($activity_tree[$three]->activities)->available);
     }
 
     /**

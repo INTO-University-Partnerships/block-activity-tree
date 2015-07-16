@@ -57,16 +57,18 @@ function get_activity_tree(\course_modinfo $modinfo, $section_number, \context $
                 F\filter(
                     $section_info->modinfo->cms,
                     function (\cm_info $cm_info) use ($section_info) {
+                        global $CFG;
                         return
-                            $cm_info->visible
-                            &&
-                            $cm_info->available
+                            ($cm_info->uservisible || ($CFG->enableavailability && !empty($cm_info->availableinfo)))
                             &&
                             (integer)$cm_info->sectionnum === (integer)$section_info->section;
                     }
                 ),
                 function (\cm_info $cm_info) use ($completion_info, $context) {
+                    global $CFG;
                     $canComplete =
+                        $CFG->enablecompletion
+                        &&
                         isloggedin()
                         &&
                         !isguestuser()
@@ -85,6 +87,7 @@ function get_activity_tree(\course_modinfo $modinfo, $section_number, \context $
                         'name'         => $cm_info->name,
                         'modname'      => $cm_info->modname,
                         'current'      => is_current_mod($cm_info, $context),
+                        'available'    => $cm_info->available,
                         'canComplete'  => $canComplete,
                         'hasCompleted' => $hasCompleted,
                     ];

@@ -3,6 +3,10 @@
     margin-left: 20px;
 }
 
+.block_activity_tree .activity .unavailable {
+    color: grey;
+}
+
 .block_activity_tree .section .current,
 .block_activity_tree .activity .current {
     font-weight: bold;

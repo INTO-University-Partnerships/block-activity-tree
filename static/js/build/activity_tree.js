@@ -46,7 +46,7 @@ var _Config2 = _interopRequireDefault(_Config);
 /**
  * toggles the completion (state) of the given activity
  * @param {number} id
- * @param {bool} hasCompleted
+ * @param {boolean} hasCompleted
  * @param {function} cb
  */
 
@@ -154,7 +154,7 @@ var Activity = (function (_React$Component) {
          * @returns {?XML}
          */
         value: function getManualCompletionCheckboxToRender() {
-            return this.props.activity.canComplete ? _react2['default'].createElement(
+            return this.props.activity.canComplete && this.props.activity.available ? _react2['default'].createElement(
                 'div',
                 { className: 'pull-right' },
                 _react2['default'].createElement('input', {
@@ -163,6 +163,29 @@ var Activity = (function (_React$Component) {
                     onChange: _lodash2['default'].bind(this.onToggleCompletion, this)
                 })
             ) : null;
+        }
+    }, {
+        key: 'getActivityNameToRender',
+
+        /**
+         * gets the activity name to render, either in a link (if the activity is available) or just text (if it's unavailable)
+         * @returns {XML}
+         */
+        value: function getActivityNameToRender() {
+            if (this.props.activity.available) {
+                var href = _Config2['default'].wwwroot + '/mod/' + this.props.activity.modname + '/view.php?id=' + this.props.activity.id;
+                return _react2['default'].createElement(
+                    'a',
+                    { href: href },
+                    this.props.activity.name
+                );
+            } else {
+                return _react2['default'].createElement(
+                    'span',
+                    { className: 'unavailable' },
+                    this.props.activity.name
+                );
+            }
         }
     }, {
         key: 'render',
@@ -176,18 +199,13 @@ var Activity = (function (_React$Component) {
                 'pull-left': true,
                 'current': this.props.activity.current
             });
-            var href = _Config2['default'].wwwroot + '/mod/' + this.props.activity.modname + '/view.php?id=' + this.props.activity.id;
             return _react2['default'].createElement(
                 'div',
                 { className: 'activity' },
                 _react2['default'].createElement(
                     'div',
                     { className: cn },
-                    _react2['default'].createElement(
-                        'a',
-                        { href: href },
-                        this.props.activity.name
-                    )
+                    this.getActivityNameToRender()
                 ),
                 this.getManualCompletionCheckboxToRender(),
                 _react2['default'].createElement('div', { className: 'clearfix' })

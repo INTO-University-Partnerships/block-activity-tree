@@ -37,7 +37,7 @@ export default class Activity extends React.Component {
      * @returns {?XML}
      */
     getManualCompletionCheckboxToRender() {
-        return this.props.activity.canComplete ? (
+        return this.props.activity.canComplete && this.props.activity.available ? (
             <div className="pull-right">
                 <input
                     type="checkbox"
@@ -49,6 +49,19 @@ export default class Activity extends React.Component {
     }
 
     /**
+     * gets the activity name to render, either in a link (if the activity is available) or just text (if it's unavailable)
+     * @returns {XML}
+     */
+    getActivityNameToRender() {
+        if (this.props.activity.available) {
+            const href = `${Config.wwwroot}/mod/${this.props.activity.modname}/view.php?id=${this.props.activity.id}`;
+            return <a href={href}>{this.props.activity.name}</a>;
+        } else {
+            return <span className="unavailable">{this.props.activity.name}</span>;
+        }
+    }
+
+    /**
      * render
      * @returns {XML}
      */
@@ -57,11 +70,10 @@ export default class Activity extends React.Component {
             'pull-left': true,
             'current': this.props.activity.current
         });
-        const href = `${Config.wwwroot}/mod/${this.props.activity.modname}/view.php?id=${this.props.activity.id}`;
         return (
             <div className="activity">
                 <div className={cn}>
-                    <a href={href}>{this.props.activity.name}</a>
+                    {this.getActivityNameToRender()}
                 </div>
                 {this.getManualCompletionCheckboxToRender()}
                 <div className="clearfix"></div>

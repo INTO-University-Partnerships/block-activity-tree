@@ -31,6 +31,7 @@ describe('Section', () => {
                         name: 'Forum 001',
                         modname: 'forum',
                         current: true,
+                        available: true,
                         canComplete: false,
                         hasCompleted: false
                     },
@@ -39,6 +40,7 @@ describe('Section', () => {
                         name: 'Wiki 001',
                         modname: 'wiki',
                         current: false,
+                        available: true,
                         canComplete: false,
                         hasCompleted: false
                     },
@@ -47,6 +49,7 @@ describe('Section', () => {
                         name: 'Url 001',
                         modname: 'url',
                         current: false,
+                        available: true,
                         canComplete: false,
                         hasCompleted: false
                     }
@@ -98,6 +101,7 @@ describe('Section', () => {
                             name: 'Forum 001',
                             modname: 'forum',
                             current: true,
+                            available: true,
                             canComplete: false,
                             hasCompleted: false
                         }
@@ -130,6 +134,7 @@ describe('Section', () => {
                             name: 'Forum 001',
                             modname: 'forum',
                             current: false,
+                            available: true,
                             canComplete: false,
                             hasCompleted: false
                         }
@@ -171,6 +176,7 @@ describe('Section', () => {
                             name: 'Forum 001',
                             modname: 'forum',
                             current: false,
+                            available: true,
                             canComplete: false,
                             hasCompleted: false
                         }
@@ -211,6 +217,7 @@ describe('Section', () => {
                             name: 'Forum 001',
                             modname: 'forum',
                             current: true,
+                            available: true,
                             canComplete: false,
                             hasCompleted: false
                         }

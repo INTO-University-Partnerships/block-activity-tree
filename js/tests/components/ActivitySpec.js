@@ -36,6 +36,7 @@ describe('Activity', () => {
                 name: 'Forum 001',
                 modname: 'forum',
                 current: true,
+                available: true,
                 canComplete: false,
                 hasCompleted: false
             };
@@ -87,6 +88,7 @@ describe('Activity', () => {
                     name: 'Forum 001',
                     modname: 'forum',
                     current: true,
+                    available: true,
                     canComplete: false,
                     hasCompleted: false
                 };
@@ -108,6 +110,7 @@ describe('Activity', () => {
                     name: 'Forum 001',
                     modname: 'forum',
                     current: true,
+                    available: true,
                     canComplete: true,
                     hasCompleted: false
                 };
@@ -145,6 +148,7 @@ describe('Activity', () => {
                     name: 'Forum 001',
                     modname: 'forum',
                     current: true,
+                    available: true,
                     canComplete: true,
                     hasCompleted: true
                 };
@@ -172,6 +176,44 @@ describe('Activity', () => {
                 expect(_.head(requests).url).toBe('/course/togglecompletion.php');
                 expect(_.head(requests).method).toBe('POST');
                 expect(_.head(requests).requestBody).toMatch(/completionstate=0/);
+            });
+        });
+    });
+
+    describe('availability', () => {
+        describe('when an activity is not available', () => {
+            let activity,
+                activityComponent;
+
+            beforeEach(() => {
+                activity = {
+                    id: 17,
+                    name: 'Forum 001',
+                    modname: 'forum',
+                    current: true,
+                    available: false,
+                    canComplete: true,
+                    hasCompleted: false
+                };
+                activityComponent = TestUtils.renderIntoDocument(
+                    <Activity activity={activity}/>
+                );
+            });
+
+            it('should not render a link to the activity', () => {
+                const links = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'a');
+                expect(_.size(links)).toBe(0);
+            });
+
+            it('should not render a manual completion checkbox', () => {
+                const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
+                expect(_.size(inputs)).toBe(0);
+            });
+
+            it('should render the activity name with class "unavailable"', () => {
+                const spans = TestUtils.scryRenderedDOMComponentsWithClass(activityComponent, 'unavailable');
+                expect(_.size(spans)).toBe(1);
+                expect(_.head(spans).props.children).toBe(activity.name);
             });
         });
     });

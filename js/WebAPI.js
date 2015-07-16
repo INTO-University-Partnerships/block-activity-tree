@@ -6,7 +6,7 @@ import Config from './Config';
 /**
  * toggles the completion (state) of the given activity
  * @param {number} id
- * @param {bool} hasCompleted
+ * @param {boolean} hasCompleted
  * @param {function} cb
  */
 export function toggleCompletion(id, hasCompleted, cb) {
