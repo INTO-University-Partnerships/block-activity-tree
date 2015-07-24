@@ -10,7 +10,7 @@ class block_activity_tree extends block_base {
      * @throws coding_exception
      */
     public function init() {
-        $this->title = get_string('pluginname', 'block_activity_tree');
+        $this->title = '';
     }
 
     /**
@@ -35,24 +35,43 @@ class block_activity_tree extends block_base {
         $activity_tree_config = json_encode((object)[
             'wwwroot' => $CFG->wwwroot,
             'sesskey' => sesskey(),
+            'trans' => (object)[
+                'prev' => get_string('previous'),
+                'next' => get_string('next'),
+            ],
+            'type' => empty($this->config->type) ? 'tree' : $this->config->type,
         ]);
-
-        // if debugging, load unminified scripts
-        $script_src = $CFG->wwwroot . '/blocks/activity_tree/static/js/build/activity_tree.min.js';
-        if (debugging()) {
-            $script_src = str_replace('.min.js', '.js', $script_src);
-        }
 
         // render the activity tree
         $this->content = new stdClass();
         $this->content->text = <<<HTML
-            <div id="into_block_activity_tree_render_target"></div>
-            <script id="into_block_activity_tree_json" type="application/json">{$activity_tree_json}</script>
-            <script id="into_block_activity_tree_config" type="application/json">{$activity_tree_config}</script>
-            <script src="{$script_src}"></script>
+            <div class="into_block_render_target"></div>
+            <script class="into_block_json" type="application/json">{$activity_tree_json}</script>
+            <script class="into_block_config" type="application/json">{$activity_tree_config}</script>
 HTML;
         $this->content->footer = '';
         return $this->content;
+    }
+
+    /**
+     * The block depends upon a React app (which should only be loaded once).
+     * Unfortunately, it is necessary to use the Moodle page requirements manager.
+     * It is also necessary to hide RequireJS from the React app.
+     */
+    public function get_required_javascript() {
+        parent::get_required_javascript();
+
+        // if debugging, load unminified script
+        $script_src = 'build/activity_tree.min.js';
+        if (debugging()) {
+            $script_src = str_replace('.min.js', '.js', $script_src);
+        }
+
+        /** @var page_requirements_manager $prm */
+        $prm = $this->page->requires;
+        $prm->js('/blocks/activity_tree/static/js/other/requirejs_hide.js');
+        $prm->js(new moodle_url('/blocks/activity_tree/static/js/' . $script_src));
+        $prm->js('/blocks/activity_tree/static/js/other/requirejs_show.js');
     }
 
     /**
@@ -60,6 +79,20 @@ HTML;
      */
     public function get_aria_role() {
         return 'navigation';
+    }
+
+    /**
+     * @return boolean
+     */
+    public function instance_allow_multiple() {
+        return true;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function instance_can_be_docked() {
+        return false;
     }
 
 }

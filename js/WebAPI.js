@@ -1,22 +1,22 @@
 'use strict';
 
 import request from 'superagent';
-import Config from './Config';
 
 /**
  * toggles the completion (state) of the given activity
+ * @param {object} config
  * @param {number} id
  * @param {boolean} hasCompleted
  * @param {function} cb
  */
-export function toggleCompletion(id, hasCompleted, cb) {
-    request.post(Config.wwwroot + '/course/togglecompletion.php')
+export function toggleCompletion(config, id, hasCompleted, cb) {
+    request.post(config.wwwroot + '/course/togglecompletion.php')
         .type('form')
         .send({
             id: id,
             completionstate: hasCompleted ? 1 : 0,
             fromajax: 1,
-            sesskey: Config.sesskey
+            sesskey: config.sesskey
         }, id)
         .end(cb);
 }

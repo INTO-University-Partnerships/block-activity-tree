@@ -4,7 +4,6 @@ import React from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
 import {toggleCompletion} from '../WebAPI';
-import Config from '../Config';
 
 export default class Activity extends React.Component {
 
@@ -28,7 +27,7 @@ export default class Activity extends React.Component {
         this.setState({
             hasCompleted
         }, () => {
-            toggleCompletion(this.props.activity.id, hasCompleted, () => {});
+            toggleCompletion(this.props.config, this.props.activity.id, hasCompleted, () => {});
         });
     }
 
@@ -54,7 +53,7 @@ export default class Activity extends React.Component {
      */
     getActivityNameToRender() {
         if (this.props.activity.available) {
-            const href = `${Config.wwwroot}/mod/${this.props.activity.modname}/view.php?id=${this.props.activity.id}`;
+            const href = `${this.props.config.wwwroot}/mod/${this.props.activity.modname}/view.php?id=${this.props.activity.id}`;
             return <a href={href}>{this.props.activity.name}</a>;
         } else {
             return <span className="unavailable">{this.props.activity.name}</span>;
@@ -84,5 +83,6 @@ export default class Activity extends React.Component {
 }
 
 Activity.propTypes = {
-    activity: React.PropTypes.object.isRequired
+    activity: React.PropTypes.object.isRequired,
+    config: React.PropTypes.object.isRequired
 };

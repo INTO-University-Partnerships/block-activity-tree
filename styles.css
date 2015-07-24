@@ -1,10 +1,36 @@
+/* begin misc */
+.block_activity_tree .unavailable {
+    color: grey;
+}
+/* end misc */
+
+/* begin 'AppTypePrevNext' component */
+.block_activity_tree .type-prev-next .prev {
+    text-align: left;
+}
+
+.block_activity_tree .type-prev-next .section {
+    text-align: center;
+}
+
+.block_activity_tree .type-prev-next .next {
+    text-align: right;
+}
+
+.block_activity_tree .type-prev-next .prev-text {
+    display: block;
+    margin-left: 14px;
+}
+
+.block_activity_tree .type-prev-next .next-text {
+    display: block;
+    margin-right: 14px;
+}
+/* end 'AppTypePrevNext' component */
+
 /* begin 'Section' and 'Activity' components */
 .block_activity_tree .activity {
     margin-left: 20px;
-}
-
-.block_activity_tree .activity .unavailable {
-    color: grey;
 }
 
 .block_activity_tree .section .current,

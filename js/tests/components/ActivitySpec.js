@@ -41,7 +41,10 @@ describe('Activity', () => {
                 hasCompleted: false
             };
             activityComponent = TestUtils.renderIntoDocument(
-                <Activity activity={activity}/>
+                <Activity
+                    activity={activity}
+                    config={{wwwroot: '', sesskey: ''}}
+                />
             );
         });
 
@@ -93,7 +96,10 @@ describe('Activity', () => {
                     hasCompleted: false
                 };
                 activityComponent = TestUtils.renderIntoDocument(
-                    <Activity activity={activity}/>
+                    <Activity
+                        activity={activity}
+                        config={{wwwroot: '', sesskey: ''}}
+                    />
                 );
             });
 
@@ -115,7 +121,10 @@ describe('Activity', () => {
                     hasCompleted: false
                 };
                 activityComponent = TestUtils.renderIntoDocument(
-                    <Activity activity={activity}/>
+                    <Activity
+                        activity={activity}
+                        config={{wwwroot: '', sesskey: ''}}
+                    />
                 );
             });
 
@@ -153,7 +162,10 @@ describe('Activity', () => {
                     hasCompleted: true
                 };
                 activityComponent = TestUtils.renderIntoDocument(
-                    <Activity activity={activity}/>
+                    <Activity
+                        activity={activity}
+                        config={{wwwroot: '', sesskey: ''}}
+                    />
                 );
             });
 
@@ -196,7 +208,10 @@ describe('Activity', () => {
                     hasCompleted: false
                 };
                 activityComponent = TestUtils.renderIntoDocument(
-                    <Activity activity={activity}/>
+                    <Activity
+                        activity={activity}
+                        config={{wwwroot: '', sesskey: ''}}
+                    />
                 );
             });
 

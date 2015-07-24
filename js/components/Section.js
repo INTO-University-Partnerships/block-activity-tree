@@ -39,7 +39,7 @@ export default class Section extends React.Component {
      * @returns {XML}
      */
     getActivitiesToRender() {
-        const items = this.state.expanded ? _.map(this.props.section.activities, activity => <Activity key={activity.id} activity={activity}/>) : [];
+        const items = this.state.expanded ? _.map(this.props.section.activities, activity => <Activity key={activity.id} activity={activity} config={this.props.config}/>) : [];
         return (
             <ReactCSSTransitionGroup transitionName="activities">
                 {items}
@@ -102,5 +102,6 @@ export default class Section extends React.Component {
 }
 
 Section.propTypes = {
-    section: React.PropTypes.object.isRequired
+    section: React.PropTypes.object.isRequired,
+    config: React.PropTypes.object.isRequired
 };

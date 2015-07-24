@@ -5,12 +5,12 @@ import _ from 'lodash';
 
 const TestUtils = React.addons.TestUtils;
 
-describe('App', () => {
-    let App,
+describe('AppTypeTree', () => {
+    let AppTypeTree,
         Section;
 
     beforeEach(() => {
-        App = require('../../components/App.js');
+        AppTypeTree = require('../../components/AppTypeTree.js');
         Section = require('../../components/Section.js');
     });
 
@@ -49,7 +49,10 @@ describe('App', () => {
                 }
             ];
             appComponent = TestUtils.renderIntoDocument(
-                <App activityTree={activityTree}/>
+                <AppTypeTree
+                    activityTree={activityTree}
+                    config={{wwwroot: '', sesskey: ''}}
+                />
             );
         });
 
@@ -58,11 +61,11 @@ describe('App', () => {
         });
 
         it('should render successfully', () => {
-            expect(TestUtils.isCompositeComponentWithType(appComponent, App)).toBeTruthy();
+            expect(TestUtils.isCompositeComponentWithType(appComponent, AppTypeTree)).toBeTruthy();
         });
 
-        it('should be rendered into an element with the "into-block-activity-tree" class', () => {
-            const renderedDOMComponent = TestUtils.findRenderedDOMComponentWithClass(appComponent, 'into-block-activity-tree');
+        it('should be rendered into an element with the "type-tree" class', () => {
+            const renderedDOMComponent = TestUtils.findRenderedDOMComponentWithClass(appComponent, 'type-tree');
             expect(React.findDOMNode(appComponent)).toBe(React.findDOMNode(renderedDOMComponent));
         });
 
@@ -110,7 +113,10 @@ describe('App', () => {
                 }
             ];
             appComponent = TestUtils.renderIntoDocument(
-                <App activityTree={activityTree}/>
+                <AppTypeTree
+                    activityTree={activityTree}
+                    config={{wwwroot: '', sesskey: ''}}
+                />
             );
         });
 

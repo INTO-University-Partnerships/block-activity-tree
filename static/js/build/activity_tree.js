@@ -4,33 +4,6 @@
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-var _lodash = require('lodash');
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
-var elem = document.querySelector('#into_block_activity_tree_config');
-
-var Config = {
-    wwwroot: '',
-    sesskey: ''
-};
-
-if (!_lodash2['default'].isNull(elem)) {
-    Config = JSON.parse(elem.innerHTML);
-}
-
-exports['default'] = Config;
-module.exports = exports['default'];
-
-},{"lodash":9}],2:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-    value: true
-});
 exports.toggleCompletion = toggleCompletion;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -39,27 +12,24 @@ var _superagent = require('superagent');
 
 var _superagent2 = _interopRequireDefault(_superagent);
 
-var _Config = require('./Config');
-
-var _Config2 = _interopRequireDefault(_Config);
-
 /**
  * toggles the completion (state) of the given activity
+ * @param {object} config
  * @param {number} id
  * @param {boolean} hasCompleted
  * @param {function} cb
  */
 
-function toggleCompletion(id, hasCompleted, cb) {
-    _superagent2['default'].post(_Config2['default'].wwwroot + '/course/togglecompletion.php').type('form').send({
+function toggleCompletion(config, id, hasCompleted, cb) {
+    _superagent2['default'].post(config.wwwroot + '/course/togglecompletion.php').type('form').send({
         id: id,
         completionstate: hasCompleted ? 1 : 0,
         fromajax: 1,
-        sesskey: _Config2['default'].sesskey
+        sesskey: config.sesskey
     }, id).end(cb);
 }
 
-},{"./Config":1,"superagent":183}],3:[function(require,module,exports){
+},{"superagent":183}],2:[function(require,module,exports){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -68,15 +38,37 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _componentsApp = require('./components/App');
+var _lodash = require('lodash');
 
-var _componentsApp2 = _interopRequireDefault(_componentsApp);
+var _lodash2 = _interopRequireDefault(_lodash);
 
-var activityTree = JSON.parse(document.querySelector('#into_block_activity_tree_json').innerHTML);
+var _componentsAppTypeTree = require('./components/AppTypeTree');
 
-_react2['default'].render(_react2['default'].createElement(_componentsApp2['default'], { activityTree: activityTree }), document.querySelector('#into_block_activity_tree_render_target'));
+var _componentsAppTypeTree2 = _interopRequireDefault(_componentsAppTypeTree);
 
-},{"./components/App":5,"react":182}],4:[function(require,module,exports){
+var _componentsAppTypePrevNext = require('./components/AppTypePrevNext');
+
+var _componentsAppTypePrevNext2 = _interopRequireDefault(_componentsAppTypePrevNext);
+
+var APP_TYPE_MAP = {
+    'tree': _componentsAppTypeTree2['default'],
+    'prev_next': _componentsAppTypePrevNext2['default']
+};
+
+_lodash2['default'].each(document.querySelectorAll('.block.block_activity_tree'), function (blockElement) {
+    var config = JSON.parse(blockElement.querySelector('.into_block_config').innerHTML);
+    if (_lodash2['default'].has(config, 'type') && _lodash2['default'].has(APP_TYPE_MAP, config.type)) {
+        var T = APP_TYPE_MAP[config.type];
+        var activityTree = JSON.parse(blockElement.querySelector('.into_block_json').innerHTML);
+        var renderTarget = blockElement.querySelector('.content .into_block_render_target');
+        _react2['default'].render(_react2['default'].createElement(T, {
+            activityTree: activityTree,
+            config: config
+        }), renderTarget);
+    }
+});
+
+},{"./components/AppTypePrevNext":4,"./components/AppTypeTree":5,"lodash":9,"react":182}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -106,10 +98,6 @@ var _classnames = require('classnames');
 var _classnames2 = _interopRequireDefault(_classnames);
 
 var _WebAPI = require('../WebAPI');
-
-var _Config = require('../Config');
-
-var _Config2 = _interopRequireDefault(_Config);
 
 var Activity = (function (_React$Component) {
 
@@ -143,7 +131,7 @@ var Activity = (function (_React$Component) {
             this.setState({
                 hasCompleted: hasCompleted
             }, function () {
-                (0, _WebAPI.toggleCompletion)(_this.props.activity.id, hasCompleted, function () {});
+                (0, _WebAPI.toggleCompletion)(_this.props.config, _this.props.activity.id, hasCompleted, function () {});
             });
         }
     }, {
@@ -173,7 +161,7 @@ var Activity = (function (_React$Component) {
          */
         value: function getActivityNameToRender() {
             if (this.props.activity.available) {
-                var href = _Config2['default'].wwwroot + '/mod/' + this.props.activity.modname + '/view.php?id=' + this.props.activity.id;
+                var href = this.props.config.wwwroot + '/mod/' + this.props.activity.modname + '/view.php?id=' + this.props.activity.id;
                 return _react2['default'].createElement(
                     'a',
                     { href: href },
@@ -219,11 +207,199 @@ var Activity = (function (_React$Component) {
 exports['default'] = Activity;
 
 Activity.propTypes = {
-    activity: _react2['default'].PropTypes.object.isRequired
+    activity: _react2['default'].PropTypes.object.isRequired,
+    config: _react2['default'].PropTypes.object.isRequired
 };
 module.exports = exports['default'];
 
-},{"../Config":1,"../WebAPI":2,"classnames":7,"lodash":9,"react":182}],5:[function(require,module,exports){
+},{"../WebAPI":1,"classnames":7,"lodash":9,"react":182}],4:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _lodash = require('lodash');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var AppTypePrevNext = (function (_React$Component) {
+
+    /**
+     * c'tor
+     * @param {object} props
+     */
+
+    function AppTypePrevNext(props) {
+        _classCallCheck(this, AppTypePrevNext);
+
+        _get(Object.getPrototypeOf(AppTypePrevNext.prototype), 'constructor', this).call(this, props);
+        var section = _lodash2['default'].find(_lodash2['default'].filter(this.props.activityTree, function (s) {
+            return s.activities.length;
+        }), function (s) {
+            return _lodash2['default'].isObject(_lodash2['default'].find(s.activities, function (a) {
+                return a.current;
+            }));
+        });
+        var activity = _lodash2['default'].isObject(section) ? _lodash2['default'].find(section.activities, function (a) {
+            return a.current;
+        }) : null;
+        this.section = _lodash2['default'].isObject(section) ? section : null;
+        this.activity = _lodash2['default'].isObject(activity) ? activity : null;
+        this.allActivities = _lodash2['default'].flatten(_lodash2['default'].map(this.props.activityTree, function (s) {
+            return s.activities;
+        }));
+    }
+
+    _inherits(AppTypePrevNext, _React$Component);
+
+    _createClass(AppTypePrevNext, [{
+        key: 'getPrevLinkToRender',
+
+        /**
+         * @returns {XML}
+         */
+        value: function getPrevLinkToRender() {
+            if (_lodash2['default'].isNull(this.section) || _lodash2['default'].isNull(this.activity)) {
+                return _react2['default'].createElement(
+                    'span',
+                    { className: 'unavailable' },
+                    this.props.config.trans.prev
+                );
+            }
+            var prevActivity = _lodash2['default'].last(_lodash2['default'].filter(_lodash2['default'].takeWhile(this.allActivities, function (a) {
+                return !a.current;
+            }), function (a) {
+                return a.available;
+            }));
+            if (!_lodash2['default'].isObject(prevActivity)) {
+                return _react2['default'].createElement(
+                    'span',
+                    { className: 'unavailable' },
+                    this.props.config.trans.prev
+                );
+            }
+            var href = this.props.config.wwwroot + '/mod/' + prevActivity.modname + '/view.php?id=' + prevActivity.id;
+            return _react2['default'].createElement(
+                'a',
+                { href: href, title: this.props.config.trans.prev },
+                _react2['default'].createElement(
+                    'span',
+                    { className: 'prev-text' },
+                    this.props.config.trans.prev
+                ),
+                _react2['default'].createElement('i', { className: 'icon-arrow-left' }),
+                _react2['default'].createElement(
+                    'span',
+                    null,
+                    prevActivity.name
+                )
+            );
+        }
+    }, {
+        key: 'getNextLinkToRender',
+
+        /**
+         * @returns {XML}
+         */
+        value: function getNextLinkToRender() {
+            if (_lodash2['default'].isNull(this.section) || _lodash2['default'].isNull(this.activity)) {
+                return _react2['default'].createElement(
+                    'span',
+                    { className: 'unavailable' },
+                    this.props.config.trans.next
+                );
+            }
+            var nextActivity = _lodash2['default'].head(_lodash2['default'].filter(_lodash2['default'].tail(_lodash2['default'].dropWhile(this.allActivities, function (a) {
+                return !a.current;
+            })), function (a) {
+                return a.available;
+            }));
+            if (!_lodash2['default'].isObject(nextActivity)) {
+                return _react2['default'].createElement(
+                    'span',
+                    { className: 'unavailable' },
+                    this.props.config.trans.next
+                );
+            }
+            var href = this.props.config.wwwroot + '/mod/' + nextActivity.modname + '/view.php?id=' + nextActivity.id;
+            return _react2['default'].createElement(
+                'a',
+                { href: href, title: this.props.config.trans.next },
+                _react2['default'].createElement(
+                    'span',
+                    { className: 'next-text' },
+                    this.props.config.trans.next
+                ),
+                _react2['default'].createElement(
+                    'span',
+                    null,
+                    nextActivity.name
+                ),
+                _react2['default'].createElement('i', { className: 'icon-arrow-right' })
+            );
+        }
+    }, {
+        key: 'render',
+
+        /**
+         * render
+         * @returns {XML}
+         */
+        value: function render() {
+            var sectionName = _lodash2['default'].isNull(this.section) ? '' : this.section.name;
+            return _react2['default'].createElement(
+                'div',
+                { className: 'type-prev-next' },
+                _react2['default'].createElement(
+                    'div',
+                    { className: 'row-fluid' },
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'span4 prev' },
+                        this.getPrevLinkToRender()
+                    ),
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'span4 section' },
+                        sectionName
+                    ),
+                    _react2['default'].createElement(
+                        'div',
+                        { className: 'span4 next' },
+                        this.getNextLinkToRender()
+                    )
+                )
+            );
+        }
+    }]);
+
+    return AppTypePrevNext;
+})(_react2['default'].Component);
+
+exports['default'] = AppTypePrevNext;
+
+AppTypePrevNext.propTypes = {
+    activityTree: _react2['default'].PropTypes.array.isRequired,
+    config: _react2['default'].PropTypes.object.isRequired
+};
+module.exports = exports['default'];
+
+},{"lodash":9,"react":182}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -252,16 +428,16 @@ var _Section = require('./Section');
 
 var _Section2 = _interopRequireDefault(_Section);
 
-var App = (function (_React$Component) {
-    function App() {
-        _classCallCheck(this, App);
+var AppTypeTree = (function (_React$Component) {
+    function AppTypeTree() {
+        _classCallCheck(this, AppTypeTree);
 
-        _get(Object.getPrototypeOf(App.prototype), 'constructor', this).apply(this, arguments);
+        _get(Object.getPrototypeOf(AppTypeTree.prototype), 'constructor', this).apply(this, arguments);
     }
 
-    _inherits(App, _React$Component);
+    _inherits(AppTypeTree, _React$Component);
 
-    _createClass(App, [{
+    _createClass(AppTypeTree, [{
         key: 'render',
 
         /**
@@ -269,25 +445,33 @@ var App = (function (_React$Component) {
          * @returns {XML}
          */
         value: function render() {
+            var _this = this;
+
+            var sections = _lodash2['default'].map(_lodash2['default'].filter(this.props.activityTree, function (section) {
+                return section.activities.length;
+            }), function (section) {
+                return _react2['default'].createElement(_Section2['default'], {
+                    key: section.section,
+                    section: section,
+                    config: _this.props.config
+                });
+            });
             return _react2['default'].createElement(
                 'div',
-                { className: 'into-block-activity-tree' },
-                _lodash2['default'].map(_lodash2['default'].filter(this.props.activityTree, function (section) {
-                    return section.activities.length;
-                }), function (section) {
-                    return _react2['default'].createElement(_Section2['default'], { key: section.section, section: section });
-                })
+                { className: 'type-tree' },
+                sections
             );
         }
     }]);
 
-    return App;
+    return AppTypeTree;
 })(_react2['default'].Component);
 
-exports['default'] = App;
+exports['default'] = AppTypeTree;
 
-App.propTypes = {
-    activityTree: _react2['default'].PropTypes.array.isRequired
+AppTypeTree.propTypes = {
+    activityTree: _react2['default'].PropTypes.array.isRequired,
+    config: _react2['default'].PropTypes.object.isRequired
 };
 module.exports = exports['default'];
 
@@ -375,8 +559,10 @@ var Section = (function (_React$Component) {
          * @returns {XML}
          */
         value: function getActivitiesToRender() {
+            var _this = this;
+
             var items = this.state.expanded ? _lodash2['default'].map(this.props.section.activities, function (activity) {
-                return _reactAddons2['default'].createElement(_Activity2['default'], { key: activity.id, activity: activity });
+                return _reactAddons2['default'].createElement(_Activity2['default'], { key: activity.id, activity: activity, config: _this.props.config });
             }) : [];
             return _reactAddons2['default'].createElement(
                 ReactCSSTransitionGroup,
@@ -456,11 +642,12 @@ var Section = (function (_React$Component) {
 exports['default'] = Section;
 
 Section.propTypes = {
-    section: _reactAddons2['default'].PropTypes.object.isRequired
+    section: _reactAddons2['default'].PropTypes.object.isRequired,
+    config: _reactAddons2['default'].PropTypes.object.isRequired
 };
 module.exports = exports['default'];
 
-},{"./Activity":4,"classnames":7,"cookies-js":8,"lodash":9,"react/addons":10}],7:[function(require,module,exports){
+},{"./Activity":3,"classnames":7,"cookies-js":8,"lodash":9,"react/addons":10}],7:[function(require,module,exports){
 /*!
   Copyright (c) 2015 Jed Watson.
   Licensed under the MIT License (MIT), see
@@ -35987,4 +36174,4 @@ module.exports = function(arr, fn, initial){
   
   return curr;
 };
-},{}]},{},[3]);
+},{}]},{},[2]);

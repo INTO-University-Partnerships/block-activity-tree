@@ -56,7 +56,10 @@ describe('Section', () => {
                 ]
             };
             sectionComponent = TestUtils.renderIntoDocument(
-                <Section section={section}/>
+                <Section
+                    section={section}
+                    config={{wwwroot: '', sesskey: ''}}
+                />
             );
         });
 
@@ -108,7 +111,10 @@ describe('Section', () => {
                     ]
                 };
                 sectionComponent = TestUtils.renderIntoDocument(
-                    <Section section={section}/>
+                    <Section
+                        section={section}
+                        config={{wwwroot: '', sesskey: ''}}
+                    />
                 );
             });
 
@@ -141,7 +147,10 @@ describe('Section', () => {
                     ]
                 };
                 sectionComponent = TestUtils.renderIntoDocument(
-                    <Section section={section}/>
+                    <Section
+                        section={section}
+                        config={{wwwroot: '', sesskey: ''}}
+                    />
                 );
             });
 
@@ -183,7 +192,10 @@ describe('Section', () => {
                     ]
                 };
                 sectionComponent = TestUtils.renderIntoDocument(
-                    <Section section={section}/>
+                    <Section
+                        section={section}
+                        config={{wwwroot: '', sesskey: ''}}
+                    />
                 );
                 const link = TestUtils.findRenderedDOMComponentWithClass(sectionComponent, 'toggle');
                 TestUtils.Simulate.click(link);
@@ -224,7 +236,10 @@ describe('Section', () => {
                     ]
                 };
                 sectionComponent = TestUtils.renderIntoDocument(
-                    <Section section={section}/>
+                    <Section
+                        section={section}
+                        config={{wwwroot: '', sesskey: ''}}
+                    />
                 );
                 const link = TestUtils.findRenderedDOMComponentWithClass(sectionComponent, 'toggle');
                 TestUtils.Simulate.click(link);
