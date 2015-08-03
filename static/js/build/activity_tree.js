@@ -10,8 +10,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 var _superagent = require('superagent');
 
-var _superagent2 = _interopRequireDefault(_superagent);
-
 /**
  * toggles the completion (state) of the given activity
  * @param {object} config
@@ -19,6 +17,8 @@ var _superagent2 = _interopRequireDefault(_superagent);
  * @param {boolean} hasCompleted
  * @param {function} cb
  */
+
+var _superagent2 = _interopRequireDefault(_superagent);
 
 function toggleCompletion(config, id, hasCompleted, cb) {
     _superagent2['default'].post(config.wwwroot + '/course/togglecompletion.php').type('form').send({
@@ -51,8 +51,8 @@ var _componentsAppTypePrevNext = require('./components/AppTypePrevNext');
 var _componentsAppTypePrevNext2 = _interopRequireDefault(_componentsAppTypePrevNext);
 
 var APP_TYPE_MAP = {
-    'tree': _componentsAppTypeTree2['default'],
-    'prev_next': _componentsAppTypePrevNext2['default']
+    tree: _componentsAppTypeTree2['default'],
+    prev_next: _componentsAppTypePrevNext2['default']
 };
 
 _lodash2['default'].each(document.querySelectorAll('.block.block_activity_tree'), function (blockElement) {
@@ -83,7 +83,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var _react = require('react');
 
@@ -100,6 +100,7 @@ var _classnames2 = _interopRequireDefault(_classnames);
 var _WebAPI = require('../WebAPI');
 
 var Activity = (function (_React$Component) {
+    _inherits(Activity, _React$Component);
 
     /**
      * c'tor
@@ -116,14 +117,12 @@ var Activity = (function (_React$Component) {
         };
     }
 
-    _inherits(Activity, _React$Component);
+    /**
+     * invoked when manual completion toggled
+     */
 
     _createClass(Activity, [{
         key: 'onToggleCompletion',
-
-        /**
-         * invoked when manual completion toggled
-         */
         value: function onToggleCompletion() {
             var _this = this;
 
@@ -134,13 +133,13 @@ var Activity = (function (_React$Component) {
                 (0, _WebAPI.toggleCompletion)(_this.props.config, _this.props.activity.id, hasCompleted, function () {});
             });
         }
-    }, {
-        key: 'getManualCompletionCheckboxToRender',
 
         /**
          * gets the manual completion checkbox to render (if the activity is configured appropriately)
          * @returns {?XML}
          */
+    }, {
+        key: 'getManualCompletionCheckboxToRender',
         value: function getManualCompletionCheckboxToRender() {
             return this.props.activity.canComplete && this.props.activity.available ? _react2['default'].createElement(
                 'div',
@@ -152,13 +151,13 @@ var Activity = (function (_React$Component) {
                 })
             ) : null;
         }
-    }, {
-        key: 'getActivityNameToRender',
 
         /**
          * gets the activity name to render, either in a link (if the activity is available) or just text (if it's unavailable)
          * @returns {XML}
          */
+    }, {
+        key: 'getActivityNameToRender',
         value: function getActivityNameToRender() {
             if (this.props.activity.available) {
                 var href = this.props.config.wwwroot + '/mod/' + this.props.activity.modname + '/view.php?id=' + this.props.activity.id;
@@ -175,13 +174,13 @@ var Activity = (function (_React$Component) {
                 );
             }
         }
-    }, {
-        key: 'render',
 
         /**
          * render
          * @returns {XML}
          */
+    }, {
+        key: 'render',
         value: function render() {
             var cn = (0, _classnames2['default'])({
                 'pull-left': true,
@@ -227,7 +226,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var _react = require('react');
 
@@ -238,6 +237,7 @@ var _lodash = require('lodash');
 var _lodash2 = _interopRequireDefault(_lodash);
 
 var AppTypePrevNext = (function (_React$Component) {
+    _inherits(AppTypePrevNext, _React$Component);
 
     /**
      * c'tor
@@ -265,14 +265,12 @@ var AppTypePrevNext = (function (_React$Component) {
         }));
     }
 
-    _inherits(AppTypePrevNext, _React$Component);
+    /**
+     * @returns {XML}
+     */
 
     _createClass(AppTypePrevNext, [{
         key: 'getPrevLinkToRender',
-
-        /**
-         * @returns {XML}
-         */
         value: function getPrevLinkToRender() {
             if (_lodash2['default'].isNull(this.section) || _lodash2['default'].isNull(this.activity)) {
                 return _react2['default'].createElement(
@@ -310,12 +308,12 @@ var AppTypePrevNext = (function (_React$Component) {
                 )
             );
         }
-    }, {
-        key: 'getNextLinkToRender',
 
         /**
          * @returns {XML}
          */
+    }, {
+        key: 'getNextLinkToRender',
         value: function getNextLinkToRender() {
             if (_lodash2['default'].isNull(this.section) || _lodash2['default'].isNull(this.activity)) {
                 return _react2['default'].createElement(
@@ -353,13 +351,13 @@ var AppTypePrevNext = (function (_React$Component) {
                 _react2['default'].createElement('i', { className: 'icon-arrow-right' })
             );
         }
-    }, {
-        key: 'render',
 
         /**
          * render
          * @returns {XML}
          */
+    }, {
+        key: 'render',
         value: function render() {
             var sectionName = _lodash2['default'].isNull(this.section) ? '' : this.section.name;
             return _react2['default'].createElement(
@@ -414,7 +412,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var _react = require('react');
 
@@ -429,13 +427,13 @@ var _Section = require('./Section');
 var _Section2 = _interopRequireDefault(_Section);
 
 var AppTypeTree = (function (_React$Component) {
+    _inherits(AppTypeTree, _React$Component);
+
     function AppTypeTree() {
         _classCallCheck(this, AppTypeTree);
 
         _get(Object.getPrototypeOf(AppTypeTree.prototype), 'constructor', this).apply(this, arguments);
     }
-
-    _inherits(AppTypeTree, _React$Component);
 
     _createClass(AppTypeTree, [{
         key: 'render',
@@ -490,7 +488,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var _reactAddons = require('react/addons');
 
@@ -516,6 +514,7 @@ var ReactCSSTransitionGroup = _reactAddons2['default'].addons.CSSTransitionGroup
 var COOKIE_KEY = 'ExpandedSections';
 
 var Section = (function (_React$Component) {
+    _inherits(Section, _React$Component);
 
     /**
      * c'tor
@@ -534,15 +533,13 @@ var Section = (function (_React$Component) {
         };
     }
 
-    _inherits(Section, _React$Component);
+    /**
+     * @param {object} cookie
+     * @returns {number[]}
+     */
 
     _createClass(Section, [{
         key: 'getExpandedSectionsFromCookie',
-
-        /**
-         * @param {object} cookie
-         * @returns {number[]}
-         */
         value: function getExpandedSectionsFromCookie(cookie) {
             if (!_cookiesJs2['default'].enabled) {
                 return [];
@@ -551,13 +548,13 @@ var Section = (function (_React$Component) {
                 return parseInt(id);
             });
         }
-    }, {
-        key: 'getActivitiesToRender',
 
         /**
          * gets activities to render
          * @returns {XML}
          */
+    }, {
+        key: 'getActivitiesToRender',
         value: function getActivitiesToRender() {
             var _this = this;
 
@@ -570,12 +567,12 @@ var Section = (function (_React$Component) {
                 items
             );
         }
-    }, {
-        key: 'setExpandedCookie',
 
         /**
          * sets the cookie that stores which sections are expanded
          */
+    }, {
+        key: 'setExpandedCookie',
         value: function setExpandedCookie() {
             if (!_cookiesJs2['default'].enabled) {
                 return;
@@ -596,28 +593,28 @@ var Section = (function (_React$Component) {
                 _cookiesJs2['default'].set(COOKIE_KEY, expandedSections.join(','));
             }
         }
-    }, {
-        key: 'toggleExpanded',
 
         /**
          * toggles expanded state
          */
+    }, {
+        key: 'toggleExpanded',
         value: function toggleExpanded() {
             var expanded = !this.state.expanded;
             this.setState({
                 expanded: expanded
             }, this.setExpandedCookie);
         }
-    }, {
-        key: 'render',
 
         /**
          * render
          * @returns {XML}
          */
+    }, {
+        key: 'render',
         value: function render() {
             var cn = (0, _classnames2['default'])({
-                'current': this.props.section.current
+                current: this.props.section.current
             });
             return _reactAddons2['default'].createElement(
                 'div',
@@ -685,13 +682,13 @@ module.exports = exports['default'];
 		return classes.substr(1);
 	}
 
-	if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
+	if (typeof module !== 'undefined' && module.exports) {
+		module.exports = classNames;
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd){
 		// AMD. Register as an anonymous module.
 		define(function () {
 			return classNames;
 		});
-	} else if (typeof module !== 'undefined' && module.exports) {
-		module.exports = classNames;
 	} else {
 		window.classNames = classNames;
 	}

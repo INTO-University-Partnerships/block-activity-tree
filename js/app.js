@@ -6,8 +6,8 @@ import AppTypeTree from './components/AppTypeTree';
 import AppTypePrevNext from './components/AppTypePrevNext';
 
 const APP_TYPE_MAP = {
-    'tree': AppTypeTree,
-    'prev_next': AppTypePrevNext
+    tree: AppTypeTree,
+    prev_next: AppTypePrevNext
 };
 
 _.each(document.querySelectorAll('.block.block_activity_tree'), blockElement => {

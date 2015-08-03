@@ -27,7 +27,7 @@
     "no-script-url": 0,
     "no-console": 0,
 
-    "no-reserved-keys": 2,
+    "quote-props": [2, "consistent-as-needed"],
     "guard-for-in": 2,
     "no-eq-null": 2,
     "no-floating-decimal": 2,
@@ -41,7 +41,9 @@
     "no-multiple-empty-lines": [2, {"max": 1}],
     "space-after-keywords": 2,
     "space-before-blocks": 2,
-    "space-in-brackets": 2,
+    "object-curly-spacing": [2, "never"],
+    "array-bracket-spacing": [2, "never"],
+    "computed-property-spacing": [2, "never"],
     "space-in-parens": 2,
 
     "react/jsx-sort-props": 0,

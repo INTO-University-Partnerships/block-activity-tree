@@ -87,7 +87,7 @@ export default class Section extends React.Component {
      */
     render() {
         const cn = classNames({
-            'current': this.props.section.current
+            current: this.props.section.current
         });
         return (
             <div className="section">
