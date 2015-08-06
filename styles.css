@@ -1,4 +1,8 @@
 /* begin misc */
+.block_activity_tree .header .title h2 {
+    display: none;
+}
+
 .block_activity_tree .unavailable {
     color: grey;
 }

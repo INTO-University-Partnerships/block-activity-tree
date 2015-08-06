@@ -10,7 +10,7 @@ class block_activity_tree extends block_base {
      * @throws coding_exception
      */
     public function init() {
-        $this->title = '';
+        $this->title = get_string('pluginname', 'block_activity_tree');
     }
 
     /**
