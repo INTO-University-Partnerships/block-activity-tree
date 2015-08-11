@@ -1,4 +1,8 @@
 {
+  "env": {
+    "browser": true,
+    "es6": true
+  },
   "ecmaFeatures": {
     "jsx": true,
     "arrowFunctions": true,
@@ -45,6 +49,15 @@
     "array-bracket-spacing": [2, "never"],
     "computed-property-spacing": [2, "never"],
     "space-in-parens": 2,
+
+    "arrow-parens": [2, "as-needed"],
+    "arrow-spacing": 2,
+    "constructor-super": 2,
+    "no-class-assign": 2,
+    "no-const-assign": 2,
+    "no-this-before-super": 2,
+    "object-shorthand": [2, "properties"],
+    "prefer-const": 2,
 
     "react/jsx-sort-props": 0,
     "react/react-in-jsx-scope": 0,
