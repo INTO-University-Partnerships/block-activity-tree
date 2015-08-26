@@ -37,3 +37,12 @@ Install [Composer](https://getcomposer.org/download/) if it isn't already.
     cd blocks/activity_tree
     npm install
     node_modules/karma/bin/karma start
+
+## Gulp
+
+There are four [Gulp](http://gulpjs.com/) tasks:
+
+* `gulp clean` deletes the build directory `static/js/build`
+* `gulp build` compiles the minified JavaScript app to the build directory `static/js/build`
+* `gulp watch` compiles the unminified JavaScript app to the build directory `static/js/build` (and recompiles when necessary)
+* `gulp lint` lints the JavaScript app with [ESLint](http://eslint.org/)
