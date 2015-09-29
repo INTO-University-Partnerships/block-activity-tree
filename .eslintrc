@@ -95,7 +95,7 @@
     "react/display-name": 0,
     "react/jsx-no-undef": 0,
 
-    "react/jsx-boolean-value": 2,
+    "react/jsx-boolean-value": [2, "always"],
     "react/jsx-uses-react": 2,
     "react/jsx-uses-vars": 2,
     "react/no-did-mount-set-state": 2,
