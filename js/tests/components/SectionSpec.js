@@ -1,10 +1,10 @@
 'use strict';
 
-import React from 'react/addons';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import Cookies from 'cookies-js';
-
-const TestUtils = React.addons.TestUtils;
+import TestUtils from 'react-addons-test-utils';
 
 describe('Section', () => {
     let Section,
@@ -64,7 +64,7 @@ describe('Section', () => {
         });
 
         afterEach(() => {
-            React.unmountComponentAtNode(React.findDOMNode(sectionComponent).parentElement);
+            ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(sectionComponent).parentElement);
         });
 
         it('should render successfully', () => {
@@ -73,7 +73,7 @@ describe('Section', () => {
 
         it('should be rendered into an element with the "section" class', () => {
             const renderedDOMComponent = TestUtils.findRenderedDOMComponentWithClass(sectionComponent, 'section');
-            expect(React.findDOMNode(sectionComponent)).toBe(React.findDOMNode(renderedDOMComponent));
+            expect(ReactDOM.findDOMNode(sectionComponent)).toBe(ReactDOM.findDOMNode(renderedDOMComponent));
         });
 
         it('should render a "Activity" component per section in its given "section.activities" prop', () => {
@@ -119,7 +119,7 @@ describe('Section', () => {
             });
 
             afterEach(() => {
-                React.unmountComponentAtNode(React.findDOMNode(sectionComponent).parentElement);
+                ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(sectionComponent).parentElement);
             });
 
             it('should show itself expanded', () => {
@@ -155,7 +155,7 @@ describe('Section', () => {
             });
 
             afterEach(() => {
-                React.unmountComponentAtNode(React.findDOMNode(sectionComponent).parentElement);
+                ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(sectionComponent).parentElement);
             });
 
             it('should show itself collapsed', () => {
@@ -202,7 +202,7 @@ describe('Section', () => {
             });
 
             afterEach(() => {
-                React.unmountComponentAtNode(React.findDOMNode(sectionComponent).parentElement);
+                ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(sectionComponent).parentElement);
             });
 
             it('should expand them', () => {
@@ -246,7 +246,7 @@ describe('Section', () => {
             });
 
             afterEach(() => {
-                React.unmountComponentAtNode(React.findDOMNode(sectionComponent).parentElement);
+                ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(sectionComponent).parentElement);
             });
 
             it('should collapse them', () => {

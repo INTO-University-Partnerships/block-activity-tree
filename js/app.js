@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import AppTypeTree from './components/AppTypeTree';
 import AppTypePrevNext from './components/AppTypePrevNext';
@@ -16,7 +17,7 @@ _.each(document.querySelectorAll('.block.block_activity_tree'), blockElement => 
         const T = APP_TYPE_MAP[config.type];
         const activityTree = JSON.parse(blockElement.querySelector('.into_block_json').innerHTML);
         const renderTarget = blockElement.querySelector('.content .into_block_render_target');
-        React.render(
+        ReactDOM.render(
             <T
                 activityTree={activityTree}
                 config={config}

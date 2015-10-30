@@ -1,9 +1,10 @@
 'use strict';
 
-import React from 'react/addons';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import _ from 'lodash';
-
-const TestUtils = React.addons.TestUtils;
+import TestUtils from 'react-addons-test-utils';
+import 'jasmine-expect';
 
 describe('Activity', () => {
     let xhr,
@@ -49,7 +50,7 @@ describe('Activity', () => {
         });
 
         afterEach(() => {
-            React.unmountComponentAtNode(React.findDOMNode(activityComponent).parentElement);
+            ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(activityComponent).parentElement);
         });
 
         it('should render successfully', () => {
@@ -58,21 +59,21 @@ describe('Activity', () => {
 
         it('should be rendered into an element with the "activity" class', () => {
             const renderedDOMComponent = TestUtils.findRenderedDOMComponentWithClass(activityComponent, 'activity');
-            expect(React.findDOMNode(activityComponent)).toBe(React.findDOMNode(renderedDOMComponent));
+            expect(ReactDOM.findDOMNode(activityComponent)).toBe(ReactDOM.findDOMNode(renderedDOMComponent));
         });
 
         it('should render a link to the activity of the form mod/modname/view.php?id=id', () => {
             const links = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'a');
             expect(_.size(links)).toBe(1);
             const link = _.head(links);
-            expect(link.props.href).toBe(`/mod/${activity.modname}/view.php?id=${activity.id}`);
+            expect(link.href).toEndWith(`/mod/${activity.modname}/view.php?id=${activity.id}`);
         });
 
         it('should render a link to the activity with a title of the activity name', () => {
             const links = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'a');
             expect(_.size(links)).toBe(1);
             const link = _.head(links);
-            expect(link.props.children).toBe(activity.name);
+            expect(link.innerHTML).toBe(activity.name);
         });
     });
 
@@ -81,7 +82,7 @@ describe('Activity', () => {
             activityComponent;
 
         afterEach(() => {
-            React.unmountComponentAtNode(React.findDOMNode(activityComponent).parentElement);
+            ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(activityComponent).parentElement);
         });
 
         describe('when an activity cannot be completed', () => {
@@ -131,18 +132,18 @@ describe('Activity', () => {
             it('should render a manual completion checkbox', () => {
                 const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
                 expect(_.size(inputs)).toBe(1);
-                expect(_.head(inputs).props.type).toBe('checkbox');
+                expect(_.head(inputs).type).toBe('checkbox');
             });
 
             it('should not check the checkbox initially', () => {
                 const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
                 expect(_.size(inputs)).toBe(1);
-                expect(_.head(inputs).props.checked).toBeFalsy();
+                expect(_.head(inputs).checked).toBeFalsy();
             });
 
             it('should invoke a JSON endpoint (to mark the activity as complete) when the checkbox is clicked', () => {
                 const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
-                TestUtils.Simulate.change(React.findDOMNode(_.head(inputs)));
+                TestUtils.Simulate.change(ReactDOM.findDOMNode(_.head(inputs)));
                 expect(_.size(requests)).toBe(1);
                 expect(_.head(requests).url).toBe('/course/togglecompletion.php');
                 expect(_.head(requests).method).toBe('POST');
@@ -172,18 +173,18 @@ describe('Activity', () => {
             it('should render a manual completion checkbox', () => {
                 const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
                 expect(_.size(inputs)).toBe(1);
-                expect(_.head(inputs).props.type).toBe('checkbox');
+                expect(_.head(inputs).type).toBe('checkbox');
             });
 
             it('should check the checkbox initially', () => {
                 const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
                 expect(_.size(inputs)).toBe(1);
-                expect(_.head(inputs).props.checked).toBeTruthy();
+                expect(_.head(inputs).checked).toBeTruthy();
             });
 
             it('should invoke a JSON endpoint (to mark the activity as incomplete) when the checkbox is clicked', () => {
                 const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
-                TestUtils.Simulate.change(React.findDOMNode(_.head(inputs)));
+                TestUtils.Simulate.change(ReactDOM.findDOMNode(_.head(inputs)));
                 expect(_.size(requests)).toBe(1);
                 expect(_.head(requests).url).toBe('/course/togglecompletion.php');
                 expect(_.head(requests).method).toBe('POST');
@@ -228,7 +229,7 @@ describe('Activity', () => {
             it('should render the activity name with class "unavailable"', () => {
                 const spans = TestUtils.scryRenderedDOMComponentsWithClass(activityComponent, 'unavailable');
                 expect(_.size(spans)).toBe(1);
-                expect(_.head(spans).props.children).toBe(activity.name);
+                expect(_.head(spans).innerHTML).toBe(activity.name);
             });
         });
     });

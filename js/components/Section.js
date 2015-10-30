@@ -1,12 +1,12 @@
 'use strict';
 
-import React from 'react/addons';
+import React from 'react';
 import _ from 'lodash';
 import Cookies from 'cookies-js';
 import classNames from 'classnames';
 import Activity from './Activity';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
-const ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 const COOKIE_KEY = 'ExpandedSections';
 
 export default class Section extends React.Component {
@@ -41,7 +41,7 @@ export default class Section extends React.Component {
     getActivitiesToRender() {
         const items = this.state.expanded ? _.map(this.props.section.activities, activity => <Activity key={activity.id} activity={activity} config={this.props.config}/>) : [];
         return (
-            <ReactCSSTransitionGroup transitionName="activities">
+            <ReactCSSTransitionGroup transitionName="activities" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
                 {items}
             </ReactCSSTransitionGroup>
         );

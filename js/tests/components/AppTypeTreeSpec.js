@@ -1,9 +1,9 @@
 'use strict';
 
-import React from 'react/addons';
+import React from 'react';
+import ReactDOM from 'react-dom';
 import _ from 'lodash';
-
-const TestUtils = React.addons.TestUtils;
+import TestUtils from 'react-addons-test-utils';
 
 describe('AppTypeTree', () => {
     let AppTypeTree,
@@ -57,7 +57,7 @@ describe('AppTypeTree', () => {
         });
 
         afterEach(() => {
-            React.unmountComponentAtNode(React.findDOMNode(appComponent).parentElement);
+            ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(appComponent).parentElement);
         });
 
         it('should render successfully', () => {
@@ -66,7 +66,7 @@ describe('AppTypeTree', () => {
 
         it('should be rendered into an element with the "type-tree" class', () => {
             const renderedDOMComponent = TestUtils.findRenderedDOMComponentWithClass(appComponent, 'type-tree');
-            expect(React.findDOMNode(appComponent)).toBe(React.findDOMNode(renderedDOMComponent));
+            expect(ReactDOM.findDOMNode(appComponent)).toBe(ReactDOM.findDOMNode(renderedDOMComponent));
         });
 
         it('should render a "Section" component per section in its given "activityTree" prop', () => {
@@ -121,7 +121,7 @@ describe('AppTypeTree', () => {
         });
 
         afterEach(() => {
-            React.unmountComponentAtNode(React.findDOMNode(appComponent).parentElement);
+            ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(appComponent).parentElement);
         });
 
         it('should render a "Section" component per section with at least one activity', () => {

@@ -1,8 +1,9 @@
 'use strict';
 
-import React from 'react/addons';
-
-const TestUtils = React.addons.TestUtils;
+import React from 'react';
+import ReactDOM from 'react-dom';
+import TestUtils from 'react-addons-test-utils';
+import 'jasmine-expect';
 
 describe('AppTypePrevNext', () => {
     let AppTypePrevNext;
@@ -73,7 +74,7 @@ describe('AppTypePrevNext', () => {
         });
 
         afterEach(() => {
-            React.unmountComponentAtNode(React.findDOMNode(appComponent).parentElement);
+            ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(appComponent).parentElement);
         });
 
         it('should render successfully', () => {
@@ -82,24 +83,24 @@ describe('AppTypePrevNext', () => {
 
         it('should be rendered into an element with the "type-prev-next" class', () => {
             const renderedDOMComponent = TestUtils.findRenderedDOMComponentWithClass(appComponent, 'type-prev-next');
-            expect(React.findDOMNode(appComponent)).toBe(React.findDOMNode(renderedDOMComponent));
+            expect(ReactDOM.findDOMNode(appComponent)).toBe(ReactDOM.findDOMNode(renderedDOMComponent));
         });
 
         it('should render the section name (corresponding to the current activity)', () => {
             const renderedDOMComponent = TestUtils.findRenderedDOMComponentWithClass(appComponent, 'section');
-            expect(renderedDOMComponent.props.children).toBe(customSectionName);
+            expect(renderedDOMComponent.innerHTML).toBe(customSectionName);
         });
 
         it('should render a link to the previous activity (relative to the current activity)', () => {
             const renderedDOMComponent = TestUtils.findRenderedDOMComponentWithClass(appComponent, 'prev');
-            const link = TestUtils.findRenderedDOMComponentWithTag(renderedDOMComponent, 'a');
-            expect(link.props.href).toBe('/mod/forum/view.php?id=1');
+            const link = renderedDOMComponent.querySelector('a');
+            expect(link.href).toEndWith('/mod/forum/view.php?id=1');
         });
 
         it('should render a link to the next activity (relative to the current activity)', () => {
             const renderedDOMComponent = TestUtils.findRenderedDOMComponentWithClass(appComponent, 'next');
-            const link = TestUtils.findRenderedDOMComponentWithTag(renderedDOMComponent, 'a');
-            expect(link.props.href).toBe('/mod/url/view.php?id=3');
+            const link = renderedDOMComponent.querySelector('a');
+            expect(link.href).toEndWith('/mod/url/view.php?id=3');
         });
     });
 
@@ -172,13 +173,13 @@ describe('AppTypePrevNext', () => {
         });
 
         afterEach(() => {
-            React.unmountComponentAtNode(React.findDOMNode(appComponent).parentElement);
+            ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(appComponent).parentElement);
         });
 
         it('should render a link to the "nearest" available activity', () => {
             const renderedDOMComponent = TestUtils.findRenderedDOMComponentWithClass(appComponent, 'next');
-            const link = TestUtils.findRenderedDOMComponentWithTag(renderedDOMComponent, 'a');
-            expect(link.props.href).toBe('/mod/quiz/view.php?id=4');
+            const link = renderedDOMComponent.querySelector('a');
+            expect(link.href).toEndWith('/mod/quiz/view.php?id=4');
         });
     });
 
@@ -251,13 +252,13 @@ describe('AppTypePrevNext', () => {
         });
 
         afterEach(() => {
-            React.unmountComponentAtNode(React.findDOMNode(appComponent).parentElement);
+            ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(appComponent).parentElement);
         });
 
         it('should render a link to the "nearest" available activity', () => {
             const renderedDOMComponent = TestUtils.findRenderedDOMComponentWithClass(appComponent, 'prev');
-            const link = TestUtils.findRenderedDOMComponentWithTag(renderedDOMComponent, 'a');
-            expect(link.props.href).toBe('/mod/forum/view.php?id=1');
+            const link = renderedDOMComponent.querySelector('a');
+            expect(link.href).toEndWith('/mod/forum/view.php?id=1');
         });
     });
 
@@ -321,19 +322,19 @@ describe('AppTypePrevNext', () => {
         });
 
         afterEach(() => {
-            React.unmountComponentAtNode(React.findDOMNode(appComponent).parentElement);
+            ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(appComponent).parentElement);
         });
 
         it('should render "Previous" with the "unavailable" class', () => {
             const renderedDOMComponent = TestUtils.findRenderedDOMComponentWithClass(appComponent, 'prev');
-            const elem = TestUtils.findRenderedDOMComponentWithClass(renderedDOMComponent, 'unavailable');
-            expect(elem.props.children).toBe(config.trans.prev);
+            const elem = renderedDOMComponent.querySelector('.unavailable');
+            expect(elem.innerHTML).toBe(config.trans.prev);
         });
 
         it('should render "Next" with the "unavailable" class', () => {
             const renderedDOMComponent = TestUtils.findRenderedDOMComponentWithClass(appComponent, 'next');
-            const elem = TestUtils.findRenderedDOMComponentWithClass(renderedDOMComponent, 'unavailable');
-            expect(elem.props.children).toBe(config.trans.next);
+            const elem = renderedDOMComponent.querySelector('.unavailable');
+            expect(elem.innerHTML).toBe(config.trans.next);
         });
     });
 
@@ -413,19 +414,19 @@ describe('AppTypePrevNext', () => {
         });
 
         afterEach(() => {
-            React.unmountComponentAtNode(React.findDOMNode(appComponent).parentElement);
+            ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(appComponent).parentElement);
         });
 
         it('should render a link to the activity in the previous section', () => {
             const renderedDOMComponent = TestUtils.findRenderedDOMComponentWithClass(appComponent, 'prev');
-            const link = TestUtils.findRenderedDOMComponentWithTag(renderedDOMComponent, 'a');
-            expect(link.props.href).toBe('/mod/forum/view.php?id=1');
+            const link = renderedDOMComponent.querySelector('a');
+            expect(link.href).toEndWith('/mod/forum/view.php?id=1');
         });
 
         it('should render a link to the activity in the next section', () => {
             const renderedDOMComponent = TestUtils.findRenderedDOMComponentWithClass(appComponent, 'next');
-            const link = TestUtils.findRenderedDOMComponentWithTag(renderedDOMComponent, 'a');
-            expect(link.props.href).toBe('/mod/glossary/view.php?id=3');
+            const link = renderedDOMComponent.querySelector('a');
+            expect(link.href).toEndWith('/mod/glossary/view.php?id=3');
         });
     });
 });
