@@ -3,7 +3,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
-import Cookies from 'cookies-js';
 import TestUtils from 'react-addons-test-utils';
 
 describe('Section', () => {
@@ -25,6 +24,7 @@ describe('Section', () => {
                 name: 'Section 0',
                 section: 0,
                 current: true,
+                expanded: true,
                 activities: [
                     {
                         id: 1,
@@ -59,6 +59,8 @@ describe('Section', () => {
                 <Section
                     section={section}
                     config={{wwwroot: '', sesskey: ''}}
+                    toggleCompl={sinon.spy()}
+                    toggleExpanded={sinon.spy()}
                 />
             );
         });
@@ -76,7 +78,7 @@ describe('Section', () => {
             expect(ReactDOM.findDOMNode(sectionComponent)).toBe(ReactDOM.findDOMNode(renderedDOMComponent));
         });
 
-        it('should render a "Activity" component per section in its given "section.activities" prop', () => {
+        it('should render a "Activity" component per activity in its given "section.activities" prop', () => {
             const activityComponents = TestUtils.scryRenderedComponentsWithType(sectionComponent, Activity);
             expect(_.size(activityComponents)).toBe(_.size(section.activities));
         });
@@ -91,13 +93,14 @@ describe('Section', () => {
         let section,
             sectionComponent;
 
-        describe('when any of its activities is the current activity', () => {
+        describe('when expanded', () => {
             beforeEach(() => {
                 section = {
                     id: 1,
                     name: 'Section 0',
                     section: 0,
                     current: true,
+                    expanded: true,
                     activities: [
                         {
                             id: 1,
@@ -114,6 +117,8 @@ describe('Section', () => {
                     <Section
                         section={section}
                         config={{wwwroot: '', sesskey: ''}}
+                        toggleCompl={sinon.spy()}
+                        toggleExpanded={sinon.spy()}
                     />
                 );
             });
@@ -122,18 +127,20 @@ describe('Section', () => {
                 ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(sectionComponent).parentElement);
             });
 
-            it('should show itself expanded', () => {
-                expect(sectionComponent.state.expanded).toBeTruthy();
+            it('should render an "Activity" component', () => {
+                const activityComponents = TestUtils.scryRenderedComponentsWithType(sectionComponent, Activity);
+                expect(_.size(activityComponents)).toBe(_.size(section.activities));
             });
         });
 
-        describe('when none of its activities are the current activity', () => {
+        describe('when collapsed', () => {
             beforeEach(() => {
                 section = {
                     id: 1,
                     name: 'Section 0',
                     section: 0,
                     current: true,
+                    expanded: false,
                     activities: [
                         {
                             id: 1,
@@ -150,6 +157,8 @@ describe('Section', () => {
                     <Section
                         section={section}
                         config={{wwwroot: '', sesskey: ''}}
+                        toggleCompl={sinon.spy()}
+                        toggleExpanded={sinon.spy()}
                     />
                 );
             });
@@ -158,22 +167,21 @@ describe('Section', () => {
                 ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(sectionComponent).parentElement);
             });
 
-            it('should show itself collapsed', () => {
-                expect(sectionComponent.state.expanded).toBeFalsy();
+            it('should not render any "Activity" components', () => {
+                const activityComponents = TestUtils.scryRenderedComponentsWithType(sectionComponent, Activity);
+                expect(_.size(activityComponents)).toBe(0);
             });
         });
     });
 
     describe('when clicked', () => {
-        let section,
+        let toggleExpandedSpy,
+            section,
             sectionComponent;
-
-        beforeEach(() => {
-            Cookies.expire('ExpandedSections');
-        });
 
         describe('and its list of activities is collapsed', () => {
             beforeEach(() => {
+                toggleExpandedSpy = sinon.spy();
                 section = {
                     id: 123,
                     name: 'Section 0',
@@ -195,6 +203,8 @@ describe('Section', () => {
                     <Section
                         section={section}
                         config={{wwwroot: '', sesskey: ''}}
+                        toggleCompl={sinon.spy()}
+                        toggleExpanded={toggleExpandedSpy}
                     />
                 );
                 const link = TestUtils.findRenderedDOMComponentWithClass(sectionComponent, 'toggle');
@@ -205,19 +215,14 @@ describe('Section', () => {
                 ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(sectionComponent).parentElement);
             });
 
-            it('should expand them', () => {
-                expect(sectionComponent.state.expanded).toBeTruthy();
-            });
-
-            it('should set the section id in the cookie', () => {
-                const sectionIds = _.map(Cookies.get('ExpandedSections').split(','), id => parseInt(id));
-                expect(sectionIds).toEqual([123]);
+            it('should invoke its toggleExpanded prop', () => {
+                expect(toggleExpandedSpy.withArgs(section).calledOnce).toBeTruthy();
             });
         });
 
         describe('and its list of activities is expanded', () => {
             beforeEach(() => {
-                Cookies.set('ExpandedSections', '122,123,124');
+                toggleExpandedSpy = sinon.spy();
                 section = {
                     id: 123,
                     name: 'Section 0',
@@ -239,6 +244,8 @@ describe('Section', () => {
                     <Section
                         section={section}
                         config={{wwwroot: '', sesskey: ''}}
+                        toggleCompl={sinon.spy()}
+                        toggleExpanded={toggleExpandedSpy}
                     />
                 );
                 const link = TestUtils.findRenderedDOMComponentWithClass(sectionComponent, 'toggle');
@@ -249,13 +256,8 @@ describe('Section', () => {
                 ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(sectionComponent).parentElement);
             });
 
-            it('should collapse them', () => {
-                expect(sectionComponent.state.expanded).toBeFalsy();
-            });
-
-            it('should remove the section id from the cookie', () => {
-                const sectionIds = _.map(Cookies.get('ExpandedSections').split(','), id => parseInt(id));
-                expect(sectionIds).toEqual([122, 124]);
+            it('should invoke its toggleExpanded prop', () => {
+                expect(toggleExpandedSpy.withArgs(section).calledOnce).toBeTruthy();
             });
         });
     });

@@ -2,8 +2,9 @@
 
 import React from 'react';
 import _ from 'lodash';
+import {connect} from 'react-redux';
 
-export default class AppTypePrevNext extends React.Component {
+export class AppTypePrevNext extends React.Component {
 
     /**
      * c'tor
@@ -89,3 +90,8 @@ AppTypePrevNext.propTypes = {
     activityTree: React.PropTypes.array.isRequired,
     config: React.PropTypes.object.isRequired
 };
+
+export const AppTypePrevNextContainer = connect(state => ({
+    activityTree: state.activityTree,
+    config: state.config
+}))(AppTypePrevNext);

@@ -7,24 +7,11 @@ import TestUtils from 'react-addons-test-utils';
 import 'jasmine-expect';
 
 describe('Activity', () => {
-    let xhr,
-        requests,
-        Activity;
+    let Activity;
 
     beforeEach(() => {
-        // fake xhrs
-        xhr = sinon.useFakeXMLHttpRequest();
-        requests = [];
-        xhr.onCreate = x => {
-            requests.push(x);
-        };
-
-        // require components
+        // require component
         Activity = require('../../components/Activity.js');
-    });
-
-    afterEach(() => {
-        xhr.restore();
     });
 
     describe('layout and initialization', () => {
@@ -45,6 +32,7 @@ describe('Activity', () => {
                 <Activity
                     activity={activity}
                     config={{wwwroot: '', sesskey: ''}}
+                    toggleCompl={sinon.spy()}
                 />
             );
         });
@@ -100,6 +88,7 @@ describe('Activity', () => {
                     <Activity
                         activity={activity}
                         config={{wwwroot: '', sesskey: ''}}
+                        toggleCompl={sinon.spy()}
                     />
                 );
             });
@@ -111,6 +100,8 @@ describe('Activity', () => {
         });
 
         describe('when an activity can be completed, but has not yet been completed', () => {
+            const toggleComplSpy = sinon.spy();
+
             beforeEach(() => {
                 activity = {
                     id: 17,
@@ -125,6 +116,7 @@ describe('Activity', () => {
                     <Activity
                         activity={activity}
                         config={{wwwroot: '', sesskey: ''}}
+                        toggleCompl={toggleComplSpy}
                     />
                 );
             });
@@ -141,17 +133,16 @@ describe('Activity', () => {
                 expect(_.head(inputs).checked).toBeFalsy();
             });
 
-            it('should invoke a JSON endpoint (to mark the activity as complete) when the checkbox is clicked', () => {
+            it('should invoke its toggleCompl prop (to mark the activity as complete) when the checkbox is clicked', () => {
                 const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
                 TestUtils.Simulate.change(ReactDOM.findDOMNode(_.head(inputs)));
-                expect(_.size(requests)).toBe(1);
-                expect(_.head(requests).url).toBe('/course/togglecompletion.php');
-                expect(_.head(requests).method).toBe('POST');
-                expect(_.head(requests).requestBody).toMatch(/completionstate=1/);
+                expect(toggleComplSpy.calledOnce).toBeTruthy();
             });
         });
 
         describe('when an activity can be completed, and has been completed', () => {
+            const toggleComplSpy = sinon.spy();
+
             beforeEach(() => {
                 activity = {
                     id: 17,
@@ -166,6 +157,7 @@ describe('Activity', () => {
                     <Activity
                         activity={activity}
                         config={{wwwroot: '', sesskey: ''}}
+                        toggleCompl={toggleComplSpy}
                     />
                 );
             });
@@ -182,13 +174,10 @@ describe('Activity', () => {
                 expect(_.head(inputs).checked).toBeTruthy();
             });
 
-            it('should invoke a JSON endpoint (to mark the activity as incomplete) when the checkbox is clicked', () => {
+            it('should invoke its toggleCompl prop (to mark the activity as incomplete) when the checkbox is clicked', () => {
                 const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
                 TestUtils.Simulate.change(ReactDOM.findDOMNode(_.head(inputs)));
-                expect(_.size(requests)).toBe(1);
-                expect(_.head(requests).url).toBe('/course/togglecompletion.php');
-                expect(_.head(requests).method).toBe('POST');
-                expect(_.head(requests).requestBody).toMatch(/completionstate=0/);
+                expect(toggleComplSpy.calledOnce).toBeTruthy();
             });
         });
     });
@@ -212,6 +201,7 @@ describe('Activity', () => {
                     <Activity
                         activity={activity}
                         config={{wwwroot: '', sesskey: ''}}
+                        toggleCompl={sinon.spy()}
                     />
                 );
             });

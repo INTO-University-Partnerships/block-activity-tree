@@ -9,7 +9,7 @@ describe('AppTypePrevNext', () => {
     let AppTypePrevNext;
 
     beforeEach(() => {
-        AppTypePrevNext = require('../../components/AppTypePrevNext.js');
+        AppTypePrevNext = require('../../components/AppTypePrevNext.js').AppTypePrevNext;
     });
 
     describe('layout and initialization', () => {

@@ -1,35 +1,9 @@
 'use strict';
 
 import React from 'react';
-import _ from 'lodash';
 import classNames from 'classnames';
-import {toggleCompletion} from '../WebAPI';
 
 export default class Activity extends React.Component {
-
-    /**
-     * c'tor
-     * @param {object} props
-     */
-    constructor(props) {
-        super(props);
-        const hasCompleted = props.activity.hasCompleted;
-        this.state = {
-            hasCompleted
-        };
-    }
-
-    /**
-     * invoked when manual completion toggled
-     */
-    onToggleCompletion() {
-        const hasCompleted = !this.state.hasCompleted;
-        this.setState({
-            hasCompleted
-        }, () => {
-            toggleCompletion(this.props.config, this.props.activity.id, hasCompleted, () => {});
-        });
-    }
 
     /**
      * gets the manual completion checkbox to render (if the activity is configured appropriately)
@@ -40,8 +14,8 @@ export default class Activity extends React.Component {
             <div className="pull-right">
                 <input
                     type="checkbox"
-                    checked={this.state.hasCompleted}
-                    onChange={_.bind(this.onToggleCompletion, this)}
+                    checked={this.props.activity.hasCompleted}
+                    onChange={() => this.props.toggleCompl(this.props.activity.id, !this.props.activity.hasCompleted)}
                 />
             </div>
         ) : null;
@@ -84,5 +58,6 @@ export default class Activity extends React.Component {
 
 Activity.propTypes = {
     activity: React.PropTypes.object.isRequired,
-    config: React.PropTypes.object.isRequired
+    config: React.PropTypes.object.isRequired,
+    toggleCompl: React.PropTypes.func.isRequired
 };

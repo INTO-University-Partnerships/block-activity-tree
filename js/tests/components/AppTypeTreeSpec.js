@@ -10,7 +10,7 @@ describe('AppTypeTree', () => {
         Section;
 
     beforeEach(() => {
-        AppTypeTree = require('../../components/AppTypeTree.js');
+        AppTypeTree = require('../../components/AppTypeTree.js').AppTypeTree;
         Section = require('../../components/Section.js');
     });
 
@@ -52,6 +52,8 @@ describe('AppTypeTree', () => {
                 <AppTypeTree
                     activityTree={activityTree}
                     config={{wwwroot: '', sesskey: ''}}
+                    toggleCompl={sinon.spy()}
+                    toggleExpanded={sinon.spy()}
                 />
             );
         });
@@ -116,6 +118,8 @@ describe('AppTypeTree', () => {
                 <AppTypeTree
                     activityTree={activityTree}
                     config={{wwwroot: '', sesskey: ''}}
+                    toggleCompl={sinon.spy()}
+                    toggleExpanded={sinon.spy()}
                 />
             );
         });
