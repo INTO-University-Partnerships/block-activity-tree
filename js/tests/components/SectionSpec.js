@@ -59,8 +59,8 @@ describe('Section', () => {
                 <Section
                     section={section}
                     config={{wwwroot: '', sesskey: ''}}
-                    toggleCompl={sinon.spy()}
-                    toggleExpanded={sinon.spy()}
+                    toggleComplThunk={sinon.spy()}
+                    toggleExpandedThunk={sinon.spy()}
                 />
             );
         });
@@ -117,8 +117,8 @@ describe('Section', () => {
                     <Section
                         section={section}
                         config={{wwwroot: '', sesskey: ''}}
-                        toggleCompl={sinon.spy()}
-                        toggleExpanded={sinon.spy()}
+                        toggleComplThunk={sinon.spy()}
+                        toggleExpandedThunk={sinon.spy()}
                     />
                 );
             });
@@ -157,8 +157,8 @@ describe('Section', () => {
                     <Section
                         section={section}
                         config={{wwwroot: '', sesskey: ''}}
-                        toggleCompl={sinon.spy()}
-                        toggleExpanded={sinon.spy()}
+                        toggleComplThunk={sinon.spy()}
+                        toggleExpandedThunk={sinon.spy()}
                     />
                 );
             });
@@ -175,18 +175,19 @@ describe('Section', () => {
     });
 
     describe('when clicked', () => {
-        let toggleExpandedSpy,
+        let toggleExpandedThunkSpy,
             section,
             sectionComponent;
 
         describe('and its list of activities is collapsed', () => {
             beforeEach(() => {
-                toggleExpandedSpy = sinon.spy();
+                toggleExpandedThunkSpy = sinon.spy();
                 section = {
                     id: 123,
                     name: 'Section 0',
                     section: 0,
                     current: true,
+                    expanded: false,
                     activities: [
                         {
                             id: 1,
@@ -203,8 +204,8 @@ describe('Section', () => {
                     <Section
                         section={section}
                         config={{wwwroot: '', sesskey: ''}}
-                        toggleCompl={sinon.spy()}
-                        toggleExpanded={toggleExpandedSpy}
+                        toggleComplThunk={sinon.spy()}
+                        toggleExpandedThunk={toggleExpandedThunkSpy}
                     />
                 );
                 const link = TestUtils.findRenderedDOMComponentWithClass(sectionComponent, 'toggle');
@@ -216,18 +217,19 @@ describe('Section', () => {
             });
 
             it('should invoke its toggleExpanded prop', () => {
-                expect(toggleExpandedSpy.withArgs(section).calledOnce).toBeTruthy();
+                expect(toggleExpandedThunkSpy.withArgs(section.id, !section.expanded).calledOnce).toBeTruthy();
             });
         });
 
         describe('and its list of activities is expanded', () => {
             beforeEach(() => {
-                toggleExpandedSpy = sinon.spy();
+                toggleExpandedThunkSpy = sinon.spy();
                 section = {
                     id: 123,
                     name: 'Section 0',
                     section: 0,
                     current: true,
+                    expanded: true,
                     activities: [
                         {
                             id: 1,
@@ -244,8 +246,8 @@ describe('Section', () => {
                     <Section
                         section={section}
                         config={{wwwroot: '', sesskey: ''}}
-                        toggleCompl={sinon.spy()}
-                        toggleExpanded={toggleExpandedSpy}
+                        toggleComplThunk={sinon.spy()}
+                        toggleExpandedThunk={toggleExpandedThunkSpy}
                     />
                 );
                 const link = TestUtils.findRenderedDOMComponentWithClass(sectionComponent, 'toggle');
@@ -257,7 +259,7 @@ describe('Section', () => {
             });
 
             it('should invoke its toggleExpanded prop', () => {
-                expect(toggleExpandedSpy.withArgs(section).calledOnce).toBeTruthy();
+                expect(toggleExpandedThunkSpy.withArgs(section.id, !section.expanded).calledOnce).toBeTruthy();
             });
         });
     });

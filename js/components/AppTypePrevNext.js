@@ -7,28 +7,13 @@ import {connect} from 'react-redux';
 export class AppTypePrevNext extends React.Component {
 
     /**
-     * c'tor
-     * @param {object} props
-     */
-    constructor(props) {
-        super(props);
-        const section = _.find(_.filter(this.props.activityTree, s => s.activities.length), s => {
-            return _.isObject(_.find(s.activities, a => a.current));
-        });
-        const activity = _.isObject(section) ? _.find(section.activities, a => a.current) : null;
-        this.section = _.isObject(section) ? section : null;
-        this.activity = _.isObject(activity) ? activity : null;
-        this.allActivities = _.flatten(_.map(this.props.activityTree, s => s.activities));
-    }
-
-    /**
      * @returns {XML}
      */
     getPrevLinkToRender() {
-        if (_.isNull(this.section) || _.isNull(this.activity)) {
+        if (_.isNull(this.props.section) || _.isNull(this.props.activity)) {
             return <span className="unavailable">{this.props.config.trans.prev}</span>;
         }
-        const prevActivity = _.last(_.filter(_.takeWhile(this.allActivities, a => !a.current), a => a.available));
+        const prevActivity = _.last(_.filter(_.takeWhile(this.props.allActivities, a => !a.current), a => a.available));
         if (!_.isObject(prevActivity)) {
             return <span className="unavailable">{this.props.config.trans.prev}</span>;
         }
@@ -45,10 +30,10 @@ export class AppTypePrevNext extends React.Component {
      * @returns {XML}
      */
     getNextLinkToRender() {
-        if (_.isNull(this.section) || _.isNull(this.activity)) {
+        if (_.isNull(this.props.section) || _.isNull(this.props.activity)) {
             return <span className="unavailable">{this.props.config.trans.next}</span>;
         }
-        const nextActivity = _.head(_.filter(_.tail(_.dropWhile(this.allActivities, a => !a.current)), a => a.available));
+        const nextActivity = _.head(_.filter(_.tail(_.dropWhile(this.props.allActivities, a => !a.current)), a => a.available));
         if (!_.isObject(nextActivity)) {
             return <span className="unavailable">{this.props.config.trans.next}</span>;
         }
@@ -66,7 +51,7 @@ export class AppTypePrevNext extends React.Component {
      * @returns {XML}
      */
     render() {
-        const sectionName = _.isNull(this.section) ? '' : this.section.name;
+        const sectionName = _.isNull(this.props.section) ? '' : this.props.section.name;
         return (
             <div className="type-prev-next">
                 <div className="row-fluid">
@@ -87,11 +72,24 @@ export class AppTypePrevNext extends React.Component {
 }
 
 AppTypePrevNext.propTypes = {
-    activityTree: React.PropTypes.array.isRequired,
+    section: React.PropTypes.object,
+    activity: React.PropTypes.object,
+    allActivities: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
     config: React.PropTypes.object.isRequired
 };
 
-export const AppTypePrevNextContainer = connect(state => ({
-    activityTree: state.activityTree,
-    config: state.config
-}))(AppTypePrevNext);
+export const AppTypePrevNextContainer = connect(state => {
+    const sec = _.find(_.filter(state.activityTree, s => s.activities.length), s => {
+        return _.isObject(_.find(s.activities, a => a.current));
+    });
+    const act = _.isObject(sec) ? _.find(sec.activities, a => a.current) : null;
+    const section = _.isObject(sec) ? sec : null;
+    const activity = _.isObject(act) ? act : null;
+    const allActivities = _.flatten(_.map(state.activityTree, s => s.activities));
+    return {
+        section,
+        activity,
+        allActivities,
+        config: state.config
+    };
+})(AppTypePrevNext);

@@ -15,7 +15,7 @@ export default class Activity extends React.Component {
                 <input
                     type="checkbox"
                     checked={this.props.activity.hasCompleted}
-                    onChange={() => this.props.toggleCompl(this.props.activity.id, !this.props.activity.hasCompleted)}
+                    onChange={() => this.props.toggleComplThunk(this.props.activity.id, !this.props.activity.hasCompleted)}
                 />
             </div>
         ) : null;
@@ -59,5 +59,5 @@ export default class Activity extends React.Component {
 Activity.propTypes = {
     activity: React.PropTypes.object.isRequired,
     config: React.PropTypes.object.isRequired,
-    toggleCompl: React.PropTypes.func.isRequired
+    toggleComplThunk: React.PropTypes.func.isRequired
 };

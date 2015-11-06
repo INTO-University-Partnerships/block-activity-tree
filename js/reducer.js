@@ -1,72 +1,21 @@
 'use strict';
 
 import _ from 'lodash';
-import Cookies from 'cookies-js';
-
-import {toggleCompletion} from './WebAPI';
-
-const COOKIE_KEY = 'ExpandedSections';
 
 /**
- * @param {object} cookie
- * @returns {number[]}
- */
-const getExpandedSectionsFromCookie = cookie => {
-    if (!Cookies.enabled) {
-        return [];
-    }
-    return _.size(cookie) === 0 ? [] : _.map(cookie.split(','), id => parseInt(id));
-};
-
-/**
- * sets the cookie that stores which sections are expanded
- * @param {object} section
- */
-const setExpandedCookie = section => {
-    if (!Cookies.enabled) {
-        return;
-    }
-    let expandedSections = getExpandedSectionsFromCookie(Cookies.get(COOKIE_KEY));
-    if (section.expanded) {
-        if (!_.contains(expandedSections, section.id)) {
-            expandedSections = _.sortBy([section.id].concat(expandedSections));
-        }
-    } else {
-        if (_.contains(expandedSections, section.id)) {
-            expandedSections = _.without(expandedSections, section.id);
-        }
-    }
-    if (_.size(expandedSections) === 0) {
-        Cookies.expire(COOKIE_KEY);
-    } else {
-        Cookies.set(COOKIE_KEY, expandedSections.join(','));
-    }
-};
-
-/**
- * sets initial state
- * sets each section's expanded state from cookies
+ * sets state
  * @param {object} state
  * @returns {object}
  */
-const setInitialState = state => {
-    const newState = _.cloneDeep(state);
-    const expandedSections = getExpandedSectionsFromCookie(Cookies.get(COOKIE_KEY));
-    _.each(newState.activityTree, section => {
-        section.expanded = _.any(section.activities, activity => activity.current) || _.contains(expandedSections, section.id);
-    });
-    return newState;
-};
+const setState = state => _.cloneDeep(state);
 
 /**
  * toggles completion state of an activity
  * @param {object} state
  * @param {integer} activityId
- * @param {boolean} hasCompleted
  * @returns {object}
  */
-const toggleCompl = (state, activityId, hasCompleted) => {
-    toggleCompletion(state.config, activityId, hasCompleted, () => {});
+const toggleCompl = (state, activityId) => {
     const newState = _.cloneDeep(state);
     const nonEmptySections = _.filter(newState.activityTree, section => section.activities.length);
     _.each(nonEmptySections, section => {
@@ -82,16 +31,15 @@ const toggleCompl = (state, activityId, hasCompleted) => {
 /**
  * toggles expanded state of a section
  * @param {object} state
- * @param {object} section
+ * @param {integer} sectionId
  * @returns {object}
  */
-const toggleExpanded = (state, section) => {
+const toggleExpanded = (state, sectionId) => {
     const newState = _.cloneDeep(state);
-    section.expanded = !section.expanded;
-    setExpandedCookie(section);
-    _.each(newState.activityTree, s => {
-        if (s.id === section.id) {
-            s.expanded = !s.expanded;
+    //setExpandedCookie(section); // @todo side-effect not allowed here!
+    _.each(newState.activityTree, section => {
+        if (section.id === sectionId) {
+            section.expanded = !section.expanded;
         }
     });
     return newState;
@@ -105,12 +53,12 @@ const toggleExpanded = (state, section) => {
  */
 const reducer = (state = {}, action = {}) => {
     switch (action.type) {
-        case 'SET_INITIAL_STATE':
-            return setInitialState(action.state);
+        case 'SET_STATE':
+            return setState(action.state);
         case 'TOGGLE_COMPL':
-            return toggleCompl(state, action.activityId, action.hasCompleted);
+            return toggleCompl(state, action.activityId);
         case 'TOGGLE_EXPANDED':
-            return toggleExpanded(state, action.section);
+            return toggleExpanded(state, action.sectionId);
     }
     return state;
 };

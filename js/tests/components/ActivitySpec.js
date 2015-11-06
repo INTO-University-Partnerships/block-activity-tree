@@ -32,7 +32,7 @@ describe('Activity', () => {
                 <Activity
                     activity={activity}
                     config={{wwwroot: '', sesskey: ''}}
-                    toggleCompl={sinon.spy()}
+                    toggleComplThunk={sinon.spy()}
                 />
             );
         });
@@ -88,7 +88,7 @@ describe('Activity', () => {
                     <Activity
                         activity={activity}
                         config={{wwwroot: '', sesskey: ''}}
-                        toggleCompl={sinon.spy()}
+                        toggleComplThunk={sinon.spy()}
                     />
                 );
             });
@@ -100,7 +100,7 @@ describe('Activity', () => {
         });
 
         describe('when an activity can be completed, but has not yet been completed', () => {
-            const toggleComplSpy = sinon.spy();
+            const toggleComplThunkSpy = sinon.spy();
 
             beforeEach(() => {
                 activity = {
@@ -116,7 +116,7 @@ describe('Activity', () => {
                     <Activity
                         activity={activity}
                         config={{wwwroot: '', sesskey: ''}}
-                        toggleCompl={toggleComplSpy}
+                        toggleComplThunk={toggleComplThunkSpy}
                     />
                 );
             });
@@ -136,12 +136,12 @@ describe('Activity', () => {
             it('should invoke its toggleCompl prop (to mark the activity as complete) when the checkbox is clicked', () => {
                 const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
                 TestUtils.Simulate.change(ReactDOM.findDOMNode(_.head(inputs)));
-                expect(toggleComplSpy.calledOnce).toBeTruthy();
+                expect(toggleComplThunkSpy.withArgs(activity.id, !activity.hasCompleted).calledOnce).toBeTruthy();
             });
         });
 
         describe('when an activity can be completed, and has been completed', () => {
-            const toggleComplSpy = sinon.spy();
+            const toggleComplThunkSpy = sinon.spy();
 
             beforeEach(() => {
                 activity = {
@@ -157,7 +157,7 @@ describe('Activity', () => {
                     <Activity
                         activity={activity}
                         config={{wwwroot: '', sesskey: ''}}
-                        toggleCompl={toggleComplSpy}
+                        toggleComplThunk={toggleComplThunkSpy}
                     />
                 );
             });
@@ -177,7 +177,7 @@ describe('Activity', () => {
             it('should invoke its toggleCompl prop (to mark the activity as incomplete) when the checkbox is clicked', () => {
                 const inputs = TestUtils.scryRenderedDOMComponentsWithTag(activityComponent, 'input');
                 TestUtils.Simulate.change(ReactDOM.findDOMNode(_.head(inputs)));
-                expect(toggleComplSpy.calledOnce).toBeTruthy();
+                expect(toggleComplThunkSpy.withArgs(activity.id, !activity.hasCompleted).calledOnce).toBeTruthy();
             });
         });
     });
@@ -201,7 +201,7 @@ describe('Activity', () => {
                     <Activity
                         activity={activity}
                         config={{wwwroot: '', sesskey: ''}}
-                        toggleCompl={sinon.spy()}
+                        toggleComplThunk={sinon.spy()}
                     />
                 );
             });

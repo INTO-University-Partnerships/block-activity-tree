@@ -1,17 +1,30 @@
 'use strict';
 
-export const setInitialState = state => ({
-    type: 'SET_INITIAL_STATE',
+import {toggleCompletion} from './WebAPI';
+import {setExpandedCookie} from './lib';
+
+export const setState = state => ({
+    type: 'SET_STATE',
     state
 });
 
-export const toggleCompl = (activityId, hasCompleted) => ({
+const toggleCompl = activityId => ({
     type: 'TOGGLE_COMPL',
-    activityId,
-    hasCompleted
+    activityId
 });
 
-export const toggleExpanded = section => ({
+const toggleExpanded = sectionId => ({
     type: 'TOGGLE_EXPANDED',
-    section
+    sectionId
 });
+
+export const toggleComplThunk = (activityId, hasCompleted) => (dispatch, getState) => {
+    toggleCompletion(getState().config, activityId, hasCompleted, () => {
+        dispatch(toggleCompl(activityId));
+    });
+};
+
+export const toggleExpandedThunk = (sectionId, expanded) => dispatch => {
+    setExpandedCookie(sectionId, expanded);
+    dispatch(toggleExpanded(sectionId));
+};

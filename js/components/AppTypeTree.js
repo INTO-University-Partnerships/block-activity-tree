@@ -19,8 +19,8 @@ export class AppTypeTree extends React.Component {
                 key={section.section}
                 section={section}
                 config={this.props.config}
-                toggleCompl={this.props.toggleCompl}
-                toggleExpanded={this.props.toggleExpanded}
+                toggleComplThunk={this.props.toggleComplThunk}
+                toggleExpandedThunk={this.props.toggleExpandedThunk}
             />
         ));
         return (
@@ -35,8 +35,8 @@ export class AppTypeTree extends React.Component {
 AppTypeTree.propTypes = {
     activityTree: React.PropTypes.array.isRequired,
     config: React.PropTypes.object.isRequired,
-    toggleCompl: React.PropTypes.func.isRequired,
-    toggleExpanded: React.PropTypes.func.isRequired
+    toggleComplThunk: React.PropTypes.func.isRequired,
+    toggleExpandedThunk: React.PropTypes.func.isRequired
 };
 
 export const AppTypeTreeContainer = connect(state => ({

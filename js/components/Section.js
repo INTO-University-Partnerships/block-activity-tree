@@ -16,7 +16,7 @@ export default class Section extends React.Component {
     getActivitiesToRender() {
         const items = this.props.section.expanded ? _.map(
             this.props.section.activities,
-            activity => <Activity key={activity.id} activity={activity} config={this.props.config} toggleCompl={this.props.toggleCompl}/>
+            activity => <Activity key={activity.id} activity={activity} config={this.props.config} toggleComplThunk={this.props.toggleComplThunk}/>
         ) : [];
         return (
             <ReactCSSTransitionGroup transitionName="activities" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
@@ -36,7 +36,9 @@ export default class Section extends React.Component {
         return (
             <div className="section">
                 <div className={cn}>
-                    <a href="javascript:;" className="toggle" onClick={() => this.props.toggleExpanded(this.props.section)}>{this.props.section.name}</a>
+                    <a href="javascript:;" className="toggle" onClick={() =>
+                        this.props.toggleExpandedThunk(this.props.section.id, !this.props.section.expanded)}>{this.props.section.name
+                    }</a>
                 </div>
                 {this.getActivitiesToRender()}
             </div>
@@ -48,6 +50,6 @@ export default class Section extends React.Component {
 Section.propTypes = {
     section: React.PropTypes.object.isRequired,
     config: React.PropTypes.object.isRequired,
-    toggleCompl: React.PropTypes.func.isRequired,
-    toggleExpanded: React.PropTypes.func.isRequired
+    toggleComplThunk: React.PropTypes.func.isRequired,
+    toggleExpandedThunk: React.PropTypes.func.isRequired
 };

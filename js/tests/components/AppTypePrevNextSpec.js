@@ -2,6 +2,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import _ from 'lodash';
 import TestUtils from 'react-addons-test-utils';
 import 'jasmine-expect';
 
@@ -67,7 +68,9 @@ describe('AppTypePrevNext', () => {
             };
             appComponent = TestUtils.renderIntoDocument(
                 <AppTypePrevNext
-                    activityTree={activityTree}
+                    section={activityTree[0]}
+                    activity={activityTree[0].activities[1]}
+                    allActivities={activityTree[0].activities}
                     config={config}
                 />
             );
@@ -166,7 +169,9 @@ describe('AppTypePrevNext', () => {
             };
             appComponent = TestUtils.renderIntoDocument(
                 <AppTypePrevNext
-                    activityTree={activityTree}
+                    section={activityTree[0]}
+                    activity={activityTree[0].activities[1]}
+                    allActivities={activityTree[0].activities}
                     config={config}
                 />
             );
@@ -245,7 +250,9 @@ describe('AppTypePrevNext', () => {
             };
             appComponent = TestUtils.renderIntoDocument(
                 <AppTypePrevNext
-                    activityTree={activityTree}
+                    section={activityTree[0]}
+                    activity={activityTree[0].activities[2]}
+                    allActivities={activityTree[0].activities}
                     config={config}
                 />
             );
@@ -315,7 +322,9 @@ describe('AppTypePrevNext', () => {
             };
             appComponent = TestUtils.renderIntoDocument(
                 <AppTypePrevNext
-                    activityTree={activityTree}
+                    section={activityTree[0]}
+                    activity={activityTree[0].activities[1]}
+                    allActivities={activityTree[0].activities}
                     config={config}
                 />
             );
@@ -407,7 +416,9 @@ describe('AppTypePrevNext', () => {
             };
             appComponent = TestUtils.renderIntoDocument(
                 <AppTypePrevNext
-                    activityTree={activityTree}
+                    section={activityTree[1]}
+                    activity={activityTree[1].activities[0]}
+                    allActivities={_.flatten(_.map(activityTree, s => s.activities))}
                     config={config}
                 />
             );

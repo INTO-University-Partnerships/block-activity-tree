@@ -52,8 +52,8 @@ describe('AppTypeTree', () => {
                 <AppTypeTree
                     activityTree={activityTree}
                     config={{wwwroot: '', sesskey: ''}}
-                    toggleCompl={sinon.spy()}
-                    toggleExpanded={sinon.spy()}
+                    toggleComplThunk={sinon.spy()}
+                    toggleExpandedThunk={sinon.spy()}
                 />
             );
         });
@@ -118,8 +118,8 @@ describe('AppTypeTree', () => {
                 <AppTypeTree
                     activityTree={activityTree}
                     config={{wwwroot: '', sesskey: ''}}
-                    toggleCompl={sinon.spy()}
-                    toggleExpanded={sinon.spy()}
+                    toggleComplThunk={sinon.spy()}
+                    toggleExpandedThunk={sinon.spy()}
                 />
             );
         });
