@@ -36,12 +36,10 @@ const toggleCompl = (state, activityId) => {
  */
 const toggleExpanded = (state, sectionId) => {
     const newState = _.cloneDeep(state);
-    //setExpandedCookie(section); // @todo side-effect not allowed here!
-    _.each(newState.activityTree, section => {
-        if (section.id === sectionId) {
-            section.expanded = !section.expanded;
-        }
-    });
+    const section = _.find(newState.activityTree, sec => sec.id === sectionId);
+    if (_.isObject(section) && _.has(section, 'expanded')) {
+        section.expanded = !section.expanded;
+    }
     return newState;
 };
 

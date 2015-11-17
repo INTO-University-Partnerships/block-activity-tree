@@ -782,12 +782,12 @@ var toggleCompl = function toggleCompl(state, activityId) {
  */
 var toggleExpanded = function toggleExpanded(state, sectionId) {
     var newState = _lodash2['default'].cloneDeep(state);
-    //setExpandedCookie(section); // @todo side-effect not allowed here!
-    _lodash2['default'].each(newState.activityTree, function (section) {
-        if (section.id === sectionId) {
-            section.expanded = !section.expanded;
-        }
+    var section = _lodash2['default'].find(newState.activityTree, function (sec) {
+        return sec.id === sectionId;
     });
+    if (_lodash2['default'].isObject(section) && _lodash2['default'].has(section, 'expanded')) {
+        section.expanded = !section.expanded;
+    }
     return newState;
 };
 
