@@ -47,7 +47,7 @@ function buildScript(production) {
     });
 
     var bundler = production ? b : watchify(b);
-    bundler.transform(babelify).transform(envify());
+    bundler.transform(babelify, {presets: ['es2015', 'react']}).transform(envify());
     bundler.on('update', function () {
         rebundle(bundler, production);
         gutil.log('Rebundle ...');
@@ -78,7 +78,7 @@ gulp.task('test', function (done) {
     return new karma.Server({
         configFile: __dirname + '/karma.conf.js',
         reporters: ['spec'],
-        singleRun: _.isUndefined(gutil.env.watch) ? true : false,
+        singleRun: !!_.isUndefined(gutil.env.watch),
         browsers: _.isUndefined(gutil.env.browser) ? ['PhantomJS', 'Firefox', 'Chrome'] : [gutil.env.browser]
     }, function () {
         done();

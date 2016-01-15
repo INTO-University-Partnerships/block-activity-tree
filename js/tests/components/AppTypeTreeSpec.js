@@ -11,7 +11,7 @@ describe('AppTypeTree', () => {
 
     beforeEach(() => {
         AppTypeTree = require('../../components/AppTypeTree.js').AppTypeTree;
-        Section = require('../../components/Section.js');
+        Section = require('../../components/Section.js').default;
     });
 
     describe('layout and initialization', () => {

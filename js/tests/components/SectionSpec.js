@@ -10,8 +10,8 @@ describe('Section', () => {
         Activity;
 
     beforeEach(() => {
-        Section = require('../../components/Section.js');
-        Activity = require('../../components/Activity.js');
+        Section = require('../../components/Section.js').default;
+        Activity = require('../../components/Activity.js').default;
     });
 
     describe('layout and initialization', () => {

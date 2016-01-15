@@ -11,7 +11,7 @@ describe('Activity', () => {
 
     beforeEach(() => {
         // require component
-        Activity = require('../../components/Activity.js');
+        Activity = require('../../components/Activity.js').default;
     });
 
     describe('layout and initialization', () => {
