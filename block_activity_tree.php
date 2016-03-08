@@ -56,7 +56,6 @@ HTML;
     /**
      * The block depends upon a React app (which should only be loaded once).
      * Unfortunately, it is necessary to use the Moodle page requirements manager.
-     * It is also necessary to hide RequireJS from the React app.
      */
     public function get_required_javascript() {
         parent::get_required_javascript();
@@ -69,9 +68,7 @@ HTML;
 
         /** @var page_requirements_manager $prm */
         $prm = $this->page->requires;
-        $prm->js('/blocks/activity_tree/static/js/other/requirejs_hide.js');
         $prm->js(new moodle_url('/blocks/activity_tree/static/js/' . $script_src));
-        $prm->js('/blocks/activity_tree/static/js/other/requirejs_show.js');
     }
 
     /**

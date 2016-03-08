@@ -22,7 +22,7 @@ _.each(document.querySelectorAll('.block.block_activity_tree'), blockElement => 
     const config = JSON.parse(blockElement.querySelector('.into_block_config').innerHTML);
     if (_.has(config, 'type') && _.has(APP_TYPE_MAP, config.type)) {
         // get activity tree and determine which sections are initially expanded
-        const activityTree = JSON.parse(blockElement.querySelector('.into_block_json').innerHTML);
+        const activityTree = _.toArray(JSON.parse(blockElement.querySelector('.into_block_json').innerHTML));
         const expandedSections = getExpandedSectionsFromCookie();
         _.each(activityTree, section => {
             section.expanded = _.any(section.activities, activity => activity.current) || _.contains(expandedSections, section.id);

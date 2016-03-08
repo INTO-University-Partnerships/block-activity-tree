@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+if (typeof window.define === 'function') { window.g_define = window.define; window.define = null; }(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -123,7 +123,7 @@ _lodash2.default.each(document.querySelectorAll('.block.block_activity_tree'), f
     if (_lodash2.default.has(config, 'type') && _lodash2.default.has(APP_TYPE_MAP, config.type)) {
         (function () {
             // get activity tree and determine which sections are initially expanded
-            var activityTree = JSON.parse(blockElement.querySelector('.into_block_json').innerHTML);
+            var activityTree = _lodash2.default.toArray(JSON.parse(blockElement.querySelector('.into_block_json').innerHTML));
             var expandedSections = (0, _lib.getExpandedSectionsFromCookie)();
             _lodash2.default.each(activityTree, function (section) {
                 section.expanded = _lodash2.default.any(section.activities, function (activity) {
@@ -154,11 +154,11 @@ _lodash2.default.each(document.querySelectorAll('.block.block_activity_tree'), f
 },{"./actionCreators":2,"./components/AppTypePrevNext":5,"./components/AppTypeTree":6,"./lib":8,"./reducer":9,"lodash":13,"react":186,"react-dom":15,"react-redux":18,"redux":189,"redux-thunk":187}],4:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -187,6 +187,7 @@ var Activity = function (_React$Component) {
 
     _createClass(Activity, [{
         key: 'getManualCompletionCheckboxToRender',
+
 
         /**
          * gets the manual completion checkbox to render (if the activity is configured appropriately)
@@ -263,6 +264,7 @@ var Activity = function (_React$Component) {
 
 exports.default = Activity;
 
+
 Activity.propTypes = {
     activity: _react2.default.PropTypes.object.isRequired,
     config: _react2.default.PropTypes.object.isRequired,
@@ -272,12 +274,12 @@ Activity.propTypes = {
 },{"classnames":11,"react":186}],5:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.AppTypePrevNextContainer = exports.AppTypePrevNext = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -308,6 +310,7 @@ var AppTypePrevNext = exports.AppTypePrevNext = function (_React$Component) {
 
     _createClass(AppTypePrevNext, [{
         key: 'getPrevLinkToRender',
+
 
         /**
          * @returns {XML}
@@ -466,12 +469,12 @@ var AppTypePrevNextContainer = exports.AppTypePrevNextContainer = (0, _reactRedu
 },{"lodash":13,"react":186,"react-redux":18}],6:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.AppTypeTreeContainer = exports.AppTypeTree = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -512,6 +515,7 @@ var AppTypeTree = exports.AppTypeTree = function (_React$Component) {
 
     _createClass(AppTypeTree, [{
         key: 'render',
+
 
         /**
          * render
@@ -559,11 +563,11 @@ var AppTypeTreeContainer = exports.AppTypeTreeContainer = (0, _reactRedux.connec
 },{"../actionCreators":2,"./Section":7,"lodash":13,"react":186,"react-redux":18}],7:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _react = require('react');
 
@@ -604,6 +608,7 @@ var Section = function (_React$Component) {
 
     _createClass(Section, [{
         key: 'getActivitiesToRender',
+
 
         /**
          * gets activities to render
@@ -658,6 +663,7 @@ var Section = function (_React$Component) {
 }(_react2.default.Component);
 
 exports.default = Section;
+
 
 Section.propTypes = {
     section: _react2.default.PropTypes.object.isRequired,
@@ -13949,7 +13955,11 @@ module.exports = function hoistNonReactStatics(targetComponent, sourceComponent)
     var keys = Object.getOwnPropertyNames(sourceComponent);
     for (var i=0; i<keys.length; ++i) {
         if (!REACT_STATICS[keys[i]] && !KNOWN_STATICS[keys[i]]) {
-            targetComponent[keys[i]] = sourceComponent[keys[i]];
+            try {
+                targetComponent[keys[i]] = sourceComponent[keys[i]];
+            } catch (error) {
+
+            }
         }
     }
 
@@ -35533,3 +35543,4 @@ module.exports = function(arr, fn, initial){
   return curr;
 };
 },{}]},{},[3]);
+if (typeof window.g_define === 'function') { window.define = window.g_define; window.g_define = null; }

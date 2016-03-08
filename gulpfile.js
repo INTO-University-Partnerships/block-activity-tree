@@ -7,6 +7,7 @@ var _ = require('lodash'),
     gutil = require('gulp-util'),
     gulpif = require('gulp-if'),
     notify = require('gulp-notify'),
+    insert = require('gulp-insert'),
     plumber = require('gulp-plumber'),
     uglify = require('gulp-uglify'),
     streamify = require('gulp-streamify'),
@@ -26,12 +27,15 @@ function handleErrors() {
 }
 
 function rebundle(bundler, production) {
-    var stream = bundler.bundle();
+    var hideRequireJS = "if (typeof window.define === 'function') { window.g_define = window.define; window.define = null; }",
+        showRequireJS = "if (typeof window.g_define === 'function') { window.define = window.g_define; window.g_define = null; }",
+        stream = bundler.bundle();
     return stream
         .on('error', handleErrors)
         .pipe(plumber())
         .pipe(gulpif(!production, source('activity_tree.js')))
         .pipe(gulpif(production, source('activity_tree.min.js')))
+        .pipe(streamify(insert.wrap(hideRequireJS, showRequireJS)))
         .pipe(gulpif(production, streamify(uglify())))
         .pipe(gulp.dest('./static/js/build/'));
 }
