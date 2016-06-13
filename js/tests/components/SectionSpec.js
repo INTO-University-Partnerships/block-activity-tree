@@ -85,7 +85,7 @@ describe('Section', () => {
 
         it('should pass each "Activity" component an activity prop', () => {
             const activityComponents = TestUtils.scryRenderedComponentsWithType(sectionComponent, Activity);
-            expect(_.all(_.map(activityComponents, activityComponent => _.isObject(activityComponent.props.activity)))).toBeTruthy();
+            expect(_.every(_.map(activityComponents, activityComponent => _.isObject(activityComponent.props.activity)))).toBeTruthy();
         });
     });
 

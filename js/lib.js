@@ -28,11 +28,11 @@ export const setExpandedCookie = (sectionId, expanded) => {
     }
     let expandedSections = getExpandedSectionsFromCookie(Cookies.get(COOKIE_KEY));
     if (expanded) {
-        if (!_.contains(expandedSections, sectionId)) {
+        if (!_.includes(expandedSections, sectionId)) {
             expandedSections = _.sortBy([sectionId].concat(expandedSections));
         }
     } else {
-        if (_.contains(expandedSections, sectionId)) {
+        if (_.includes(expandedSections, sectionId)) {
             expandedSections = _.without(expandedSections, sectionId);
         }
     }

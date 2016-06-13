@@ -78,7 +78,7 @@ describe('AppTypeTree', () => {
 
         it('should pass each "Section" component a section prop', () => {
             const sectionComponents = TestUtils.scryRenderedComponentsWithType(appComponent, Section);
-            expect(_.all(_.map(sectionComponents, sectionComponent => _.isObject(sectionComponent.props.section)))).toBeTruthy();
+            expect(_.every(_.map(sectionComponents, sectionComponent => _.isObject(sectionComponent.props.section)))).toBeTruthy();
         });
     });
 

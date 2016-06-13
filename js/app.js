@@ -25,7 +25,7 @@ _.each(document.querySelectorAll('.block.block_activity_tree'), blockElement => 
         const activityTree = _.toArray(JSON.parse(blockElement.querySelector('.into_block_json').innerHTML));
         const expandedSections = getExpandedSectionsFromCookie();
         _.each(activityTree, section => {
-            section.expanded = _.any(section.activities, activity => activity.current) || _.contains(expandedSections, section.id);
+            section.expanded = _.some(section.activities, activity => activity.current) || _.includes(expandedSections, section.id);
         });
 
         // create store (with thunk middleware)
